@@ -27,7 +27,7 @@ ISR(TIMER5_OVF_vect)
 
 //----------------------------------------------------------------------//
 
-void Timer_Init ()
+void Timer_Initialize ()
 {
 	static BOOL _can_i_run = TRUE;
 	

@@ -58,7 +58,7 @@ inline void UartSet :: Disable_9bit()
 
 //----------------------------------------------------------------------//
 
-inline YesNo UartSet :: Is_enable_9bit()
+inline YesNo UartSet :: Is_enabled_9bit()
 {
 	return Is_true_the_UCSRB(UCSZ2);
 }

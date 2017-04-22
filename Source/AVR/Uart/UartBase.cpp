@@ -69,7 +69,7 @@ UartSet :: UartSet (UartNum _arg_uart_adrs)
 
 //----------------------------------------------------------------------//
 
-void UartSet :: Can_you_want_enable_9bit (const YesNo _yes_no)
+void UartSet :: Want_to_enable_9bit (const YesNo _yes_no)
 {
 	if (_yes_no)	UartSet :: Enable_9bit();
 	else			UartSet :: Disable_9bit();
@@ -77,7 +77,7 @@ void UartSet :: Can_you_want_enable_9bit (const YesNo _yes_no)
 
 //----------------------------------------------------------------------//
 
-void UartSet :: Can_you_want_enable_isr(const UartISR _isr, const YesNo _yes_no)
+void UartSet :: Want_to_enable_isr(const UartISR _isr, const YesNo _yes_no)
 {
 	if (_yes_no)	UartSet :: Enable_isr(_isr);
 	else			UartSet :: Disable_isr(_isr);

@@ -19,7 +19,7 @@ inline Byte IoBase :: PORT ()
 
 //----------------------------------------------------------------------//
 
-inline void IoBase :: PORT (Byte _data)
+inline void IoBase :: PORT (const Byte _data)
 {
 	return (*_w_port)(_data);
 }

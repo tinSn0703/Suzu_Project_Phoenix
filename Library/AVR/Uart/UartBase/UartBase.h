@@ -61,12 +61,12 @@ public:
 	
 	BOOL Is_it_receive();
 	
-	void Can_you_want_enable_9bit(YesNo _yes_or_no);
+	void Want_to_enable_9bit(YesNo _yes_or_no);
 	void Enable_9bit();
 	void Disable_9bit();
-	YesNo Is_enable_9bit();
+	YesNo Is_enabled_9bit();
 	
-	void Can_you_want_enable_isr(UartISR _isr, YesNo _yes_or_no);
+	void Want_to_enable_isr(UartISR _isr, YesNo _yes_or_no);
 	void Enable_isr(UartISR _isr);
 	void Disable_isr(UartISR _isr);
 	YesNo Is_enabled_isr(UartISR _isr);

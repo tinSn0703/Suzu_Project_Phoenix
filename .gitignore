@@ -45,3 +45,16 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+*.d
+*.o
+Debug/makedep.mk
+*.eep
+Debug/Suzu_Project_Phoenix.elf
+*.hex
+Debug/Suzu_Project_Phoenix.lss
+*.map
+Debug/Suzu_Project_Phoenix.srec
+*.xml
+Suzu_Project_Phoenix.cppproj
+*.txt
+Debug/Makefile

@@ -34,15 +34,13 @@ public:
 
 /************************************************************************/
 
-class ControllerRead : public virtual ControllerBase
+class ControllerGet : public virtual ControllerBase
 {
 private:
 	
-	int Get_base (usint _bit, usint _and);
+	int Get_base (Byte _bit, Byte _and);
 	
-public:
-	
-	ControllerRead() {}
+protected:
 	
 	Btn Get_btn_North();
 	Btn Get_btn_South();
@@ -56,6 +54,11 @@ public:
 	
 	Btn Get_other_0();
 	Btn Get_other_1();
+	
+public:
+	
+	ControllerGet() {}
+	
 	Btn Get_SELECT();
 	Btn Get_START();
 	
@@ -66,7 +69,7 @@ public:
 	DirecX Get_cross_x();
 	DirecY Get_cross_y();
 	
-	ControllerData Get_data (usint _num);
+	ControllerData Get_data (sint _num);
 	
 	ullint Get_data ();
 	
@@ -79,8 +82,6 @@ public:
 	
 	DirecX operator [] (ControllerDirecX _bit);
 	DirecY operator [] (ControllerDirecY _bit);
-	
-	ControllerData operator [] (usint _num);
 };
 
 /************************************************************************/
@@ -116,7 +117,44 @@ public:
 
 /************************************************************************/
 
-class ControllerLCD : public ControllerRead
+class ControllerPush : public virtual ControllerGet
+{
+private:
+	
+	DataBit16 _mem_is_pushed_btn :12;
+	
+	BOOL Is_enabled(int _btn);
+	
+	void Want_to_enable(int _btn, YesNo _yesno);
+	
+protected:
+	
+	Btn Push_btn_North();
+	Btn Push_btn_South();
+	Btn Push_btn_East();
+	Btn Push_btn_West();
+	
+	Btn Push_right_0();
+	Btn Push_right_1();
+	Btn Push_left_0();
+	Btn Push_left_1();
+	
+	Btn Push_other_0();
+	Btn Push_other_1();
+	
+public:
+	
+	ControllerPush();
+		
+	Btn Push_SELECT();
+	Btn Push_START();
+	
+	Btn Push(ControllerBtn _btn);
+};
+
+/************************************************************************/
+
+class ControllerLCD : public virtual ControllerGet
 {
 private:
 	
@@ -124,9 +162,7 @@ private:
 	void LCD_base (LcdAdrs _adrs, DirecX _data);
 	void LCD_base (LcdAdrs _adrs, DirecY _data);
 	
-public:
-	
-	ControllerLCD () {}
+protected:
 	
 	void LCD_north (LcdAdrs _adrs);
 	void LCD_south (LcdAdrs _adrs);
@@ -140,6 +176,11 @@ public:
 	
 	void LCD_other_0 (LcdAdrs _adrs);
 	void LCD_other_1 (LcdAdrs _adrs);
+	
+public:
+
+	ControllerLCD () {}
+	
 	void LCD_SELECT (LcdAdrs _adrs);
 	void LCD_START  (LcdAdrs _adrs);
 	
@@ -164,6 +205,7 @@ public:
 
 #include "ControllerRead_inline.h"
 #include "ControllerRewrite_inline.h"
+#include "ControllerPush_inline.h"
 #include "ControllerLCD_inline.h"
 
 /************************************************************************/

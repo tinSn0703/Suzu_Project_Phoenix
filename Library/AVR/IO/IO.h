@@ -13,11 +13,11 @@ public:
 	
 	IoOut(IoAdrs _io_adrs);
 	
-	void Write (Byte _out_data);
-	void Write (BOOL _is_high, IoBit _bit);
+	void Out (Byte _out_data);
+	void Out (BOOL _is_high, IoBit _bit);
 	
-	void Write_high (IoBit _bit);
-	void Write_low	(IoBit _bit);
+	void Out_high (IoBit _bit);
+	void Out_low	(IoBit _bit);
 };
 
 /************************************************************************/
@@ -28,8 +28,8 @@ public:
 	
 	IoIn(IoAdrs _io_adrs);
 	
-	Byte Read();
-	BOOL Read(IoBit _bit);
+	Byte In();
+	BOOL In(IoBit _bit);
 };
 
 /************************************************************************/
@@ -42,10 +42,10 @@ public:
 	
 	IoOutBit(IoAdrs _io_adrs, IoBit _bit);
 	
-	void Write(BOOL _is_high);
+	void Out(BOOL _is_high);
 	
-	void Write_low();
-	void Write_high();
+	void Out_low();
+	void Out_high();
 };
 
 /************************************************************************/
@@ -58,7 +58,7 @@ public:
 	
 	IoInBit(IoAdrs _io_adrs, IoBit _bit);
 	
-	BOOL Read();
+	BOOL In();
 };
 
 /************************************************************************/

@@ -56,7 +56,7 @@ Time;
 
 Byte Read_counter_high ();
 
-void Timer_Init ();
+void Timer_Initialize ();
 
 inline DataTime Timer_Read ();
 

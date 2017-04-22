@@ -9,6 +9,7 @@
  */ 
 
 #include <MainCircit/MainCircit.h>
+#include <time.h>
 
 int main ()
 {
@@ -23,8 +24,14 @@ int main ()
 	{
 		_controller.Receive();
 		
+		if (_controller.Get_Cir() == BTN_ON)
+		{
+			
+		}
+		
 		_wheel.Drive(_controller.Get_stick_Lx(), _controller.Get_stick_Ly());
 		
 		_wheel.Transmit();
 	}
 }
+

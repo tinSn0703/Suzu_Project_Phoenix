@@ -61,14 +61,14 @@ inline BOOL Conpute_AND_BOOL (const BOOL _left, const BOOL _right)
 
 //----------------------------------------------------------------------//
 
-inline BOOL Is_true_the (const int _check_data, const usint _bit)
+inline BOOL Is_true_the (const int _check_data, const int _bit)
 {
 	return (BOOL)((_check_data >> _bit) & 1);
 }
 
 //----------------------------------------------------------------------//
 
-inline BOOL Is_false_the (const int _check_data, const usint _bit)
+inline BOOL Is_false_the (const int _check_data, const int _bit)
 {
 	return (BOOL)(~(_check_data >> _bit) & 1);
 }
@@ -78,8 +78,8 @@ inline BOOL Is_false_the (const int _check_data, const usint _bit)
 inline BOOL Are_true_the 
 (
 	const int	_check_data, 
-	const usint	_bit_0, 
-	const usint	_bit_1
+	const int	_bit_0, 
+	const int	_bit_1
 )
 {
 	return (BOOL)
@@ -93,8 +93,8 @@ inline BOOL Are_true_the
 inline BOOL Are_false_the 
 (
 	const int	_check_data, 
-	const usint _bit_0, 
-	const usint _bit_1
+	const int	_bit_0, 
+	const int	_bit_1
 )
 {
 	return (BOOL)

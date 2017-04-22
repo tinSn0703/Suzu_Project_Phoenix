@@ -47,9 +47,9 @@ void ControllerBase :: Combine (const Byte _data[_NUM_CONTROLLER_UART_DATA_])
 
 void ControllerBase :: Clear()
 {
-	_mem_data._arr_all[0] = 0xff;
-	_mem_data._arr_all[1] = 0x0f;
-	_mem_data._arr_all[2] = 0x00;
+	_mem_data._array[0] = 0x00;
+	_mem_data._array[1] = 0xf0;
+	_mem_data._array[2] = 0xff;
 }
 
 //----------------------------------------------------------------------//
@@ -60,17 +60,30 @@ void ControllerBase :: Clear()
 
 //----------------------------------------------------------------------//
 
-ControllerRewrite :: ControllerRewrite (BOOL _arg_is_poss_rewrite)
+ControllerRewrite :: ControllerRewrite (const BOOL _arg_is_poss_rewrite)
 {
 	_mem_is_rewritten = _arg_is_poss_rewrite;
 }
 
 //----------------------------------------------------------------------//
 
-void ControllerRewrite :: Rewrite_base(usint _arg_bit, int _arg_data, int _arg_and)
+void ControllerRewrite :: Rewrite_base(const usint _bit, const int _data, const int _and)
 {
-	_mem_data._all &= ~(_arg_and  << _arg_bit);
-	_mem_data._all |=  (_arg_data << _arg_bit);
+	_mem_data._all &= ~(_and  << _bit);
+	_mem_data._all |=  (_data << _bit);
+}
+
+//----------------------------------------------------------------------//
+
+/************************************************************************/
+/*	ControllerPush														*/
+/************************************************************************/
+
+//----------------------------------------------------------------------//
+
+ControllerPush :: ControllerPush ()
+{
+	_mem_is_pushed_btn = 0xfff;
 }
 
 //----------------------------------------------------------------------//

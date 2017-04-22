@@ -7,28 +7,28 @@
 
 //----------------------------------------------------------------------//
 
-inline void IoOut :: Write (const Byte _out_data)
+inline void IoOut :: Out (const Byte _out_data)
 {
 	IoBase :: PORT(_out_data);
 }
 
 //----------------------------------------------------------------------//
 
-inline void IoOut :: Write (const BOOL _is_high, const IoBit _bit)
+inline void IoOut :: Out (const BOOL _is_high, const IoBit _bit)
 {
 	IoBase :: PORT(_bit, _is_high);
 }
 
 //----------------------------------------------------------------------//
 
-inline void IoOut :: Write_high (const IoBit _bit)
+inline void IoOut :: Out_high (const IoBit _bit)
 {
 	IoBase :: PORT(_bit, TRUE);
 }
 
 //----------------------------------------------------------------------//
 
-inline void IoOut :: Write_low	(const IoBit _bit)
+inline void IoOut :: Out_low	(const IoBit _bit)
 {
 	IoBase :: PORT(_bit, FALSE);
 }
@@ -41,14 +41,14 @@ inline void IoOut :: Write_low	(const IoBit _bit)
 
 //----------------------------------------------------------------------//
 
-inline Byte IoIn :: Read()
+inline Byte IoIn :: In()
 {
 	return IoBase :: PIN();
 }
 
 //----------------------------------------------------------------------//
 
-inline BOOL IoIn :: Read(const IoBit _bit)
+inline BOOL IoIn :: In(const IoBit _bit)
 {
 	return Is_true_the(IoBase :: PIN(), _bit);
 }
@@ -61,21 +61,21 @@ inline BOOL IoIn :: Read(const IoBit _bit)
 
 //----------------------------------------------------------------------//
 
-inline void IoOutBit :: Write(const BOOL _is_high)
+inline void IoOutBit :: Out(const BOOL _is_high)
 {
 	IoBase :: PORT(_mem_bit, _is_high);
 }
 
 //----------------------------------------------------------------------//
 
-inline void IoOutBit :: Write_low()
+inline void IoOutBit :: Out_low()
 {
 	IoBase :: PORT(_mem_bit, FALSE);
 }
 
 //----------------------------------------------------------------------//
 
-inline void IoOutBit :: Write_high()
+inline void IoOutBit :: Out_high()
 {
 	IoBase :: PORT(_mem_bit, TRUE);
 }
@@ -88,7 +88,7 @@ inline void IoOutBit :: Write_high()
 
 //----------------------------------------------------------------------//
 
-inline BOOL IoInBit :: Read()
+inline BOOL IoInBit :: In()
 {
 	return Is_true_the(IoBase :: PIN(), _mem_bit);
 }

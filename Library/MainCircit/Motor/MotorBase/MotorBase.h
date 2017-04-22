@@ -75,7 +75,7 @@ public:
 	void Set_direct(Pwm _pwm);
 	void Set_direct(Signal _sig, Pwm _pwm, BOOL _is_steps_on);
 	
-	void Can_you_want_use_steps (YesNo _yes_no);
+	void Want_to_use_steps (YesNo _yes_no);
 	
 	void operator ++ (int );
 	void operator -- (int );

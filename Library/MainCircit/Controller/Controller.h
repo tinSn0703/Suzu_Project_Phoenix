@@ -11,6 +11,7 @@
 /************************************************************************/
 
 class Controller	: public ClassController :: ControllerRewrite
+					, public ClassController :: ControllerPush
 					, public ClassController :: ControllerLCD
 {
 private:

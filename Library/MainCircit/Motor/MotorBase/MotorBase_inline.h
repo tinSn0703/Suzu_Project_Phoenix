@@ -122,7 +122,7 @@ inline void MotorOperate :: Set
 {
 	Set_direct(_arg_sig);
 	Set(_arg_pwm);
-	Can_you_want_use_steps(_arg_is_steps_on);
+	Want_to_use_steps(_arg_is_steps_on);
 }
 
 //----------------------------------------------------------------------//
@@ -157,12 +157,12 @@ inline void MotorOperate :: Set_direct
 {
 	Set_direct(_arg_sig);
 	Set_direct(_arg_pwm);
-	Can_you_want_use_steps(_arg_is_steps_on);
+	Want_to_use_steps(_arg_is_steps_on);
 }
 
 //----------------------------------------------------------------------//
 
-inline void MotorOperate :: Can_you_want_use_steps (const YesNo _arg_is_on)
+inline void MotorOperate :: Want_to_use_steps (const YesNo _arg_is_on)
 {
 	_mem_data._0._sub._is_steps_on = _arg_is_on;
 }

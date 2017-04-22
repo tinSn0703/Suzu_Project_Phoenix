@@ -71,7 +71,7 @@ inline void ValveOperate :: Toggle (const ValveNum _arg_num)
 
 inline void ValveLCD :: LCD (const LcdAdrs _arg_adrs, const ValveNum _arg_num)
 {	
-	LCD_Display_num(_arg_adrs, Is_open(_arg_num), 1, DECIMAL_02);
+	LCD_Display_num(_arg_adrs, Is_open_for(_arg_num), 1, DECIMAL_02);
 }
 
 //----------------------------------------------------------------------//

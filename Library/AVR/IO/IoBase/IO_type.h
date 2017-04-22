@@ -43,6 +43,18 @@ IoBit;
 
 /************************************************************************/
 
+#ifdef __cplusplus	//C++‚ÌŽž—p
+
+namespace ClassIO	{
+
+#endif /*__cplusplus*/
+
 typedef Byte (*fpReadPIN)();
 typedef Byte (*fpReadPORT)();
 typedef void (*fpWritePORT)(Byte );
+
+#ifdef __cplusplus	//C++‚ÌŽž—p
+
+	};
+
+#endif /*__cplusplus*/

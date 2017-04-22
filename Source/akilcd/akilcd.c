@@ -9,38 +9,38 @@
 
 /************************************************************************/
 
-#define _BIT_RS_	(1 << RS)
-#define _BIT_RW_	(1 << RW)
-#define _BIT_EN_	(1 << EN)
-#define _BIT_DB4_	(1 << DB4)
-#define _BIT_DB5_	(1 << DB5)
-#define _BIT_DB6_	(1 << DB6)
-#define _BIT_DB7_	(1 << DB7)
+#define BIT_RS	(1 << RS)
+#define BIT_RW	(1 << RW)
+#define BIT_EN	(1 << EN)
+#define BIT_DB4	(1 << DB4)
+#define BIT_DB5	(1 << DB5)
+#define BIT_DB6	(1 << DB6)
+#define BIT_DB7	(1 << DB7)
 
-#define _LOW_RS_	(	PORT_RS  &= ~_BIT_RS_	)
-#define _LOW_RW_	(	PORT_RW  &= ~_BIT_RW_	)
-#define _LOW_EN_	(	PORT_EN  &= ~_BIT_EN_	)
-#define _LOW_DB4_	(	PORT_DB4 &= ~_BIT_DB4_	)
-#define _LOW_DB5_	(	PORT_DB5 &= ~_BIT_DB5_	)
-#define _LOW_DB6_	(	PORT_DB6 &= ~_BIT_DB6_	)
-#define _LOW_DB7_	(	PORT_DB7 &= ~_BIT_DB7_	)
+#define LOW_RS()	(	PORT_RS  &= ~BIT_RS		)
+#define LOW_RW()	(	PORT_RW  &= ~BIT_RW		)
+#define LOW_EN()	(	PORT_EN  &= ~BIT_EN		)
+#define LOW_DB4()	(	PORT_DB4 &= ~BIT_DB4	)
+#define LOW_DB5()	(	PORT_DB5 &= ~BIT_DB5	)
+#define LOW_DB6()	(	PORT_DB6 &= ~BIT_DB6	)
+#define LOW_DB7()	(	PORT_DB7 &= ~BIT_DB7	)
 
-#define _HIGH_RS_	(	PORT_RS  |= _BIT_RS_	)
-#define _HIGH_RW_	(	PORT_RW  |= _BIT_RW_	)
-#define _HIGH_EN_	(	PORT_EN  |= _BIT_EN_	)
-#define _HIGH_DB4_	(	PORT_DB4 |= _BIT_DB4_	)
-#define _HIGH_DB5_	(	PORT_DB5 |= _BIT_DB5_	)
-#define _HIGH_DB6_	(	PORT_DB6 |= _BIT_DB6_	)
-#define _HIGH_DB7_	(	PORT_DB7 |= _BIT_DB7_	)
+#define HIGH_RS()	(	PORT_RS  |= BIT_RS	)
+#define HIGH_RW()	(	PORT_RW  |= BIT_RW	)
+#define HIGH_EN()	(	PORT_EN  |= BIT_EN	)
+#define HIGH_DB4()	(	PORT_DB4 |= BIT_DB4	)
+#define HIGH_DB5()	(	PORT_DB5 |= BIT_DB5	)
+#define HIGH_DB6()	(	PORT_DB6 |= BIT_DB6	)
+#define HIGH_DB7()	(	PORT_DB7 |= BIT_DB7	)
 
 /************************************************************************/
 
 static void Enable_writting_LCD ()
 {
 	_delay_us(25);
-	_HIGH_EN_;
+	HIGH_EN();
 	_delay_us(25);
-	_LOW_EN_;
+	LOW_EN();
 	_delay_us(25);
 }
 
@@ -48,20 +48,20 @@ static void Enable_writting_LCD ()
 
 static inline void Write_LCD_0 (const unsigned char data)
 {
-	_LOW_RW_;
-	_LOW_RS_;
+	LOW_RW();
+	LOW_RS();
 
-	if (data & (1<<7))	_HIGH_DB7_;
-	else				_LOW_DB7_;
+	if (data & (1<<7))	HIGH_DB7();
+	else				LOW_DB7();
 	
-	if (data & (1<<6))	_HIGH_DB6_;
-	else				_LOW_DB6_;
+	if (data & (1<<6))	HIGH_DB6();
+	else				LOW_DB6();
 	
-	if (data & (1<<5))	_HIGH_DB5_;
-	else				_LOW_DB5_;
+	if (data & (1<<5))	HIGH_DB5();
+	else				LOW_DB5();
 	
-	if (data & (1<<4))	_HIGH_DB4_;
-	else				_LOW_DB4_;
+	if (data & (1<<4))	HIGH_DB4();
+	else				LOW_DB4();
 
 	Enable_writting_LCD();
 }
@@ -70,34 +70,34 @@ static inline void Write_LCD_0 (const unsigned char data)
 
 static inline void Write_LCD_1 (const unsigned char data)
 {
-	_LOW_RW_;
-	_LOW_RS_;
+	LOW_RW();
+	LOW_RS();
 
-	if (data & (1<<7))	_HIGH_DB7_;	
-	else				_LOW_DB7_;
+	if (data & (1<<7))	HIGH_DB7();	
+	else				LOW_DB7();
 		
-	if (data & (1<<6))	_HIGH_DB6_;
-	else				_LOW_DB6_;
+	if (data & (1<<6))	HIGH_DB6();
+	else				LOW_DB6();
 	
-	if (data & (1<<5))	_HIGH_DB5_;
-	else				_LOW_DB5_;
+	if (data & (1<<5))	HIGH_DB5();
+	else				LOW_DB5();
 	
-	if (data & (1<<4))	_HIGH_DB4_;
-	else				_LOW_DB4_;
+	if (data & (1<<4))	HIGH_DB4();
+	else				LOW_DB4();
 	
 	Enable_writting_LCD();
 
-	if (data & (1<<3))	_HIGH_DB7_;
-	else				_LOW_DB7_;
+	if (data & (1<<3))	HIGH_DB7();
+	else				LOW_DB7();
 	
-	if (data & (1<<2))	_HIGH_DB6_;
-	else				_LOW_DB6_;
+	if (data & (1<<2))	HIGH_DB6();
+	else				LOW_DB6();
 	
-	if (data & (1<<1))	_HIGH_DB5_;
-	else				_LOW_DB5_;
+	if (data & (1<<1))	HIGH_DB5();
+	else				LOW_DB5();
 	
-	if (data & (1<<0))	_HIGH_DB4_;
-	else				_LOW_DB4_;
+	if (data & (1<<0))	HIGH_DB4();
+	else				LOW_DB4();
 	
 	Enable_writting_LCD();
 }
@@ -106,51 +106,51 @@ static inline void Write_LCD_1 (const unsigned char data)
 
 static inline void Write_LCD_2 (const unsigned char data)
 {
-	_LOW_RW_;
-	_HIGH_RS_;
+	LOW_RW();
+	HIGH_RS();
 
-	if (data & (1<<7))	_HIGH_DB7_;
-	else				_LOW_DB7_;
+	if (data & (1<<7))	HIGH_DB7();
+	else				LOW_DB7();
 	
-	if (data & (1<<6))	_HIGH_DB6_;
-	else				_LOW_DB6_;
+	if (data & (1<<6))	HIGH_DB6();
+	else				LOW_DB6();
 	
-	if (data & (1<<5))	_HIGH_DB5_;
-	else				_LOW_DB5_;
+	if (data & (1<<5))	HIGH_DB5();
+	else				LOW_DB5();
 	
-	if (data & (1<<4))	_HIGH_DB4_;
-	else				_LOW_DB4_;
+	if (data & (1<<4))	HIGH_DB4();
+	else				LOW_DB4();
 	
 	Enable_writting_LCD();
 
-	if (data & (1<<3))	_HIGH_DB7_;
-	else				_LOW_DB7_;
+	if (data & (1<<3))	HIGH_DB7();
+	else				LOW_DB7();
 	
-	if (data & (1<<2))	_HIGH_DB6_;
-	else				_LOW_DB6_;
+	if (data & (1<<2))	HIGH_DB6();
+	else				LOW_DB6();
 	
-	if (data & (1<<1))	_HIGH_DB5_;
-	else				_LOW_DB5_;
+	if (data & (1<<1))	HIGH_DB5();
+	else				LOW_DB5();
 	
-	if (data & (1<<0))	_HIGH_DB4_;
-	else				_LOW_DB4_;
+	if (data & (1<<0))	HIGH_DB4();
+	else				LOW_DB4();
 	
 	Enable_writting_LCD();
 
-	_LOW_RS_;
+	LOW_RS();
 }
 
 //----------------------------------------------------------------------//
 
 static inline void Init_port_LCD ()
 {
-	DDR_RS   |=  _BIT_RS_;	_LOW_RS_;
-	DDR_RW   |=  _BIT_RW_;	_LOW_RW_;
-	DDR_EN   |=  _BIT_EN_;	_LOW_EN_;
-	DDR_DB4  |=  _BIT_DB4_;	_LOW_DB4_;
-	DDR_DB5  |=  _BIT_DB5_;	_LOW_DB5_;
-	DDR_DB6  |=  _BIT_DB6_;	_LOW_DB6_;
-	DDR_DB7  |=  _BIT_DB7_;	_LOW_DB7_;
+	DDR_RS   |=  BIT_RS;	LOW_RS();
+	DDR_RW   |=  BIT_RW;	LOW_RW();
+	DDR_EN   |=  BIT_EN;	LOW_EN();
+	DDR_DB4  |=  BIT_DB4;	LOW_DB4();
+	DDR_DB5  |=  BIT_DB5;	LOW_DB5();
+	DDR_DB6  |=  BIT_DB6;	LOW_DB6();
+	DDR_DB7  |=  BIT_DB7;	LOW_DB7();
 }
 
 //----------------------------------------------------------------------//
@@ -291,28 +291,28 @@ void PUT_NUM
 #undef PORT_DB6
 #undef PORT_DB7
 
-#undef _BIT_RS_
-#undef _BIT_RW_
-#undef _BIT_EN_
-#undef _BIT_DB4_
-#undef _BIT_DB5_
-#undef _BIT_DB6_
-#undef _BIT_DB7_
+#undef BIT_RS
+#undef BIT_RW
+#undef BIT_EN
+#undef BIT_DB4
+#undef BIT_DB5
+#undef BIT_DB6
+#undef BIT_DB7
 
-#undef _LOW_RS_
-#undef _LOW_RW_
-#undef _LOW_EN_
-#undef _LOW_DB4_
-#undef _LOW_DB5_
-#undef _LOW_DB6_
-#undef _LOW_DB7_
+#undef LOW_RS
+#undef LOW_RW
+#undef LOW_EN
+#undef LOW_DB4
+#undef LOW_DB5
+#undef LOW_DB6
+#undef LOW_DB7
 
-#undef _HIGH_RS_
-#undef _HIGH_RW_
-#undef _HIGH_EN_
-#undef _HIGH_DB4_
-#undef _HIGH_DB5_
-#undef _HIGH_DB6_
-#undef _HIGH_DB7_
+#undef HIGH_RS
+#undef HIGH_RW
+#undef HIGH_EN
+#undef HIGH_DB4
+#undef HIGH_DB5
+#undef HIGH_DB6
+#undef HIGH_DB7
 
 /************************************************************************/

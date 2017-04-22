@@ -55,7 +55,7 @@ inline void MDC :: Can_you_want_use_steps (const BOOL _is_steps_on)
 {
 	for (Byte i = 0; i <= _mem_num_of_slot; i++)
 	{
-		_mem_md[i].Can_you_want_use_steps(_is_steps_on);
+		_mem_md[i].Want_to_use_steps(_is_steps_on);
 	}
 }
 
