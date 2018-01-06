@@ -3,7 +3,7 @@
 
 /************************************************************************/
 
-typedef Byte IoData;
+typedef uByte IoData;
 
 /************************************************************************/
 
@@ -26,18 +26,16 @@ IoAdrs;
 
 //----------------------------------------------------------------------//
 
-typedef enum
-{
-	IO_BIT_0 = 0,
-	IO_BIT_1 = 1,
-	IO_BIT_2 = 2,
-	IO_BIT_3 = 3,
-	IO_BIT_4 = 4,
-	IO_BIT_5 = 5,
-	IO_BIT_6 = 6,
-	IO_BIT_7 = 7
-}
-IoBit;
+#define IO_BIT_0 0
+#define IO_BIT_1 1
+#define IO_BIT_2 2
+#define IO_BIT_3 3
+#define IO_BIT_4 4
+#define IO_BIT_5 5
+#define IO_BIT_6 6
+#define IO_BIT_7 7
+ 
+typedef Byte IoBit;
 
 //----------------------------------------------------------------------//
 
@@ -49,9 +47,9 @@ namespace ClassIO	{
 
 #endif /*__cplusplus*/
 
-typedef Byte (*fpReadPIN)();
-typedef Byte (*fpReadPORT)();
-typedef void (*fpWritePORT)(Byte );
+typedef uByte (*fpReadPIN)();
+typedef uByte (*fpReadPORT)();
+typedef void (*fpWritePORT)(uByte );
 
 #ifdef __cplusplus	//C++‚ÌŽž—p
 

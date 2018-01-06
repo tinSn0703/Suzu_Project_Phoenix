@@ -1,8 +1,13 @@
 
 #include <akilcd/akilcd.h>
 #include <Others/BOOL.h>
-#include <AVR/AVR.h>
+#include <AVR/Timer/GeneralTimer.h>
+#include <AVR/Uart/Uart.h>
 #include <MainCircit/Valve/ValveBase/ValveBase.h>
+
+/************************************************************************/
+
+#define WAIT_MS_TIME 50
 
 /************************************************************************/
 
@@ -17,7 +22,7 @@ namespace ClassValve
 
 ValveBase :: ValveBase ()
 {	
-	ValveBase :: Clear();
+	Clear();
 }
 
 //----------------------------------------------------------------------//
@@ -30,24 +35,22 @@ void ValveBase :: Clear()
 //----------------------------------------------------------------------//
 
 /************************************************************************/
-/*	ValveWrite															*/
+/*	ValveSet															*/
 /************************************************************************/
 
 //----------------------------------------------------------------------//
 
-ValveWrite :: ValveWrite ()
-{}
+ValveSet :: ValveSet ()	{}
 
 //----------------------------------------------------------------------//
 
 /************************************************************************/
-/*	ValveRead															*/
+/*	ValveGet															*/
 /************************************************************************/
 
 //----------------------------------------------------------------------//
 
-ValveRead :: ValveRead ()
-{}
+ValveGet :: ValveGet ()	{}
 
 //----------------------------------------------------------------------//
 
@@ -59,103 +62,108 @@ ValveRead :: ValveRead ()
 
 ValveOperate :: ValveOperate()
 {	
-	_mem_is_move_allow = 0xff;
-		
-	Timer_Initialize();
+	_mem_is_move_enabled = 0xff;
 }
 
 //----------------------------------------------------------------------//
 
-void ValveOperate :: Confirm_safety
+void ValveOperate :: Set_timer(const ValveNum _num)
+{
+	_mem_timer[_num] = Timer::General::Read() + Timer::General::To_count_value(WAIT_MS_TIME);
+}
+
+//----------------------------------------------------------------------//
+
+void ValveOperate :: Safety
 (
-	const ValveNum _arg_num_a,
-	const ValveNum _arg_num_b
+	const ValveNum _num_a,
+	const ValveNum _num_b
 )
 {
-	if (Is_open_for(_arg_num_a) & Is_open_for(_arg_num_b))
+	if (Is_open_for(_num_a) & Is_open_for(_num_b))
 	{
-		Want_to_open(_arg_num_a, FALSE);
-		Want_to_open(_arg_num_b, FALSE);
+		Want_to_open(_num_a, FALSE);
+		Want_to_open(_num_b, FALSE);
 	}
 }
 
 //----------------------------------------------------------------------//
 
-void ValveOperate :: OpenClose 
+void ValveOperate :: Open_or_Close 
 (
-	const ValveNum	_arg_num, 
-	const BOOL		_arg_is_move
+	const ValveNum	_num, 
+	const BOOL		_is_move
 )
 {
-	if (_arg_is_move & Is_allow(_arg_num))
+	if (_is_move & Is_enabled(_num))
 	{
-		Toggle(_arg_num);
+		Toggle(_num);
 		
-		Can_allow(_arg_num, FALSE);
+		Want_to_enable(_num, FALSE);
 		
-		Set_timer(_arg_num);
+		Set_timer(_num);
 	}
 	
-	if (Comp_timer(_arg_num))
+	if (Compare_timer(_num))
 	{
-		Can_allow(_arg_num, TRUE);
+		Want_to_enable(_num, TRUE);
 	}
 }
 
 //----------------------------------------------------------------------//
 
-void ValveOperate :: OpenClose 
+void ValveOperate :: Open_or_Close 
 (
 	const ValveNum	_num_a, 
 	const ValveNum	_num_b, 
 	const BOOL		_is_move
 )
 {
-	if (_is_move & Is_allow(_num_a))
+	if (_is_move & Is_enabled(_num_a))
 	{
-		Want_to_open(_num_a, FALSE);
-		Want_to_open(_num_b, FALSE);
+		Want_to_open(_num_a, NO);
+		Want_to_open(_num_b, NO);
 		
 		Set_timer(_num_a);
 	}
 	
-	if ((Is_open_for(_num_a) | Is_open_for(_num_b) | ~Comp_timer(_num_a)) == FALSE)
+	if ((Is_open_for(_num_a) | Is_open_for(_num_b) | ~Compare_timer(_num_a)) == NO)
 	{
-		switch (Is_allow(_num_b))
+		switch (Is_enabled(_num_b))
 		{
-			case TRUE:	Want_to_open(_num_a, TRUE);	break;
-			case FALSE:	Want_to_open(_num_b, TRUE);	break;
+			case YES:	Want_to_open(_num_a, YES);	break;
+			case NO:	Want_to_open(_num_b, YES);	break;
 		}
 		
-		Reversal_allow(_num_b);
+		Reversal_enabled(_num_b);
 	}
 	
-	Confirm_safety(_num_a, _num_b);
+	Safety(_num_a, _num_b);
 	
-	Can_allow(_num_a, ~_is_move);
+	Want_to_enable(_num_a, ~_is_move);
 }
 
 //----------------------------------------------------------------------//
 
-void ValveOperate :: OpenClose
+void ValveOperate :: Open_or_Close
 (
-	const ValveNum	_arg_num_a, 
-	const BOOL		_arg_is_move_a, 
-	const ValveNum	_arg_num_b, 
-	const BOOL		_arg_is_move_b
+	const ValveNum	_num_a, 
+	const BOOL		_is_move_a, 
+	const VALVE::Num	_num_b, 
+	const BOOL		_is_move_b
 )
 {
-	if ((Is_open_for(_arg_num_b) & _arg_is_move_a) == FALSE)
+	if ((Is_open_for(_num_b) & _is_move_a) == NO)
 	{
-		OpenClose(_arg_num_a, _arg_is_move_a);
+		Open_or_Close(_num_a, _is_move_a);
 	}
 	
-	if ((Is_open_for(_arg_num_a) & _arg_is_move_b) == FALSE)
+	if ((Is_open_for(_num_a) & _is_move_b) == NO)
 	{
-		OpenClose(_arg_num_b, _arg_is_move_b);
+		Open_or_Close(_num_b, _is_move_b);
 	}
 	
-	Confirm_safety(_arg_num_a, _arg_num_b);
+	Safety(_num_a, _num_b);
 }
 
 //----------------------------------------------------------------------//
@@ -170,19 +178,19 @@ ValveLCD :: ValveLCD()	{}
 
 //----------------------------------------------------------------------//
 
-void ValveLCD :: LCD (const LcdAdrs _arg_adrs, const Decimal _arg_decimal)
+void ValveLCD :: Display(const LcdAdrs _adrs, const Decimal _decimal)
 {
-	switch (_arg_decimal)
+	switch (_decimal)
 	{
 		case DECIMAL_02:
 		{
-			LCD_Display_num(_arg_adrs, ValveRead :: Get(), 8, DECIMAL_02);
+			LCD::Write(_adrs, Get(), 8, DECIMAL_02);
 			
 			break;
 		}
 		default:
 		{
-			LCD_Display_num(_arg_adrs, ValveRead :: Get(), 2, DECIMAL_16);
+			LCD::Write(_adrs, Get(), 2, DECIMAL_16);
 			
 			break;
 		}

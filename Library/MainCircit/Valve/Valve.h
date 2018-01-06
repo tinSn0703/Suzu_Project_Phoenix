@@ -2,21 +2,27 @@
 
 #pragma once
 
-#if defined(__cplusplus)
+/************************************************************************/
 
 #include "ValveBase/ValveBase.h"
 
-class Valve	: public ClassValve :: ValveOperate
-			, public ClassValve :: ValveLCD
+/************************************************************************/
+
+class Valve	: public ClassValve::ValveOperate
+			, public ClassValve::ValveLCD
 {
+//variable
 private:
 	
 	UartTransmit _mem_uart;
 	
+//function
 public:
 	
 	Valve (UartNum _uart_adrs);
 	Valve (UartNum _uart_adrs, ValveData _init_data);
+	
+	UartTransmit * Get_uart();
 	
 	void Transmit ();
 	void Transmit (UartTransmit &_uart);
@@ -25,8 +31,4 @@ public:
 	void Transmit_clear (UartTransmit &_uart);
 };
 
-#else
-
-#include "ValveBase/ValveData/ValveData.h"
-
-#endif
+/************************************************************************/

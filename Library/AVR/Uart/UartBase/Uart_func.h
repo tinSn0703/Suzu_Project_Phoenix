@@ -6,38 +6,47 @@
 
 /************************************************************************/
 
-#define _UCSRA_	_SFR_MEM8(_adrs  + 0)
-#define _UCSRB_	_SFR_MEM8(_adrs  + 1)
-#define _UCSRC_	_SFR_MEM8(_adrs  + 2)
-#define _UBRRL_	_SFR_MEM8(_adrs  + 4)
-#define _UBRRH_	_SFR_MEM8(_adrs  + 5)
-#define _UDR_	_SFR_MEM8(_adrs  + 6)
-#define _UBRR_	_SFR_MEM16(_adrs + 4)
+namespace Uart
+{
 
 /************************************************************************/
 
-void UART_Init (UartNum _adrs);
-
-void UART_Init_details (UartNum _adrs, unsigned short int _ubrr, unsigned char _parity);
-
-UartData8bit UART_Receive_8bit (UartNum _adrs);
-
-UartData9bit UART_Receive_9bit (UartNum _adrs);
-
-void UART_Transmit_8bit (UartNum _adrs, UartData9bit _data);
-
-void UART_Transmit_9bit (UartNum _adrs, UartData9bit _data);
+#define UCSRA	_SFR_MEM8(_adrs  + 0)
+#define UCSRB	_SFR_MEM8(_adrs  + 1)
+#define UCSRC	_SFR_MEM8(_adrs  + 2)
+#define UBRRL	_SFR_MEM8(_adrs  + 4)
+#define UBRRH	_SFR_MEM8(_adrs  + 5)
+#define UDR		_SFR_MEM8(_adrs  + 6)
+#define UBRR	_SFR_MEM16(_adrs + 4)
 
 /************************************************************************/
 
-#include "Uart_func_inline.h"
+void Initialize (UartNum _adrs);
+
+void Initizlize_details (UartNum _adrs, unsigned short int _ubrr, unsigned char _parity);
+
+UartData8bit Receive_8bit (UartNum _adrs);
+
+UartData9bit Receive_9bit (UartNum _adrs);
+
+void Transmit_8bit (UartNum _adrs, UartData9bit _data);
+
+void Transmit_9bit (UartNum _adrs, UartData9bit _data);
+
+/************************************************************************/
 
 #ifndef _UART_SOURCE_
-#	undef _UCSRA_
-#	undef _UCSRB_
-#	undef _UCSRC_
-#	undef _UBRRL_
-#	undef _UBRRH_
-#	undef _UDR_
-#	undef _UBRR_
+#	undef UCSRA
+#	undef UCSRB
+#	undef UCSRC
+#	undef UBRRL
+#	undef UBRRH
+#	undef UDR
+#	undef UBRR
 #endif
+
+/************************************************************************/
+
+};
+
+/************************************************************************/

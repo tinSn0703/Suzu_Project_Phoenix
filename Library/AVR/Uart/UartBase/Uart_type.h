@@ -14,10 +14,12 @@ typedef DataBit16	UartData9bit;
 //UARTÇÃî‘çÜÇï\Ç∑å^
 typedef enum
 {
-	UART_ADRS_0 = 0xc0,
-	UART_ADRS_1 = 0xc8,
-	UART_ADRS_2 = 0xd0,
-	UART_ADRS_3 = 0x130,
+	UART_NUM_N = 0x00,
+	
+	UART_NUM_0 = 0xc0,
+	UART_NUM_1 = 0xc8,
+	UART_NUM_2 = 0xd0,
+	UART_NUM_3 = 0x130,
 }
 UartNum;
 

@@ -1,8 +1,9 @@
 
-
 #include <akilcd/akilcd.h>
 #include <Others/Others.h>
 #include <AVR/AVR.h>
+#include <MainCircit/Direction.h>
+#include <MainCircit/Signal.h>
 #include <MainCircit/Motor/Motor.h>
 #include <MainCircit/MDC/MDC.h>
 #include <MainCircit/MDC/Wheel.h>
@@ -11,59 +12,53 @@
 
 //----------------------------------------------------------------------//
 
-Wheel :: Wheel(MdcNum _num_mdc, UartNum _uart_num)
+Wheel :: Wheel(const UartNum _uart_num, const Byte _num_wheel)
 
-	: MDC(_num_mdc, _uart_num, 4)
-
+	: MDC(_uart_num, _num_wheel)
 {
-	_is_invert_y = FALSE;
+	_mem_pwm = 0;
 	
-	Wheel :: Set(CENTER_X, CENTER_Y);
+	Set_turn_direction(NON_TURN);
+	
+	Set_move_direction(Direction::xCENTER, Direction::yCENTER);
+	
+	Set_steps(STEPS_USE);
 }
 
 //----------------------------------------------------------------------//
 
-void Wheel :: Turning 
-(
-	const BOOL	_is_turn_right, 
-	const BOOL	_is_turn_left
-)
+void Wheel::Set_turn_direction(const YesNo _is_turn_l, const YesNo _is_turn_r)
 {
-	MDC :: Set
-	(
-		_is_turn_right	? SIGNAL_FORWARD :
-		_is_turn_left	? SIGNAL_REVERSE :
-		SIGNAL_BREAK
-	);
-	
-	MDC :: Can_you_want_use_steps(YES);
+	if		(_is_turn_l)	_mem_direc_turn = LEFT_TURN;
+	else if (_is_turn_r)	_mem_direc_turn = RIGHT_TURN;
+	else					_mem_direc_turn = NON_TURN;
 }
 
 //----------------------------------------------------------------------//
 
-void Wheel :: Drive_front_or_back()
+void Wheel::Set_record_pwm()
 {
-	//2017 4/5
-	//ちゃんと動くかわかってないのでチェックを忘れないでください
-	
-	const Byte _temp_right = 
-	(
-		_is_invert_y ? Reversal_DirecY(_mem_direc_y) : _mem_direc_y
-	);
-	
-	const Byte _temp_left = 
-	(
-		_is_invert_y ? _mem_direc_y : Reversal_DirecY(_mem_direc_y)
-	);
-	
-	_mem_md[FRONT_RIGHT] = Convert_to_Signal(_temp_right);
-	_mem_md[BACK_RIGHT]	 = Convert_to_Signal(_temp_right);
-	_mem_md[BACK_LEFT]	 = Convert_to_Signal(_temp_left);
-	_mem_md[FRONT_LEFT]	 = Convert_to_Signal(_temp_left);
-	
-	MDC :: Can_you_want_use_steps(YES);
+	for (uByte i = 0; i <= Get_num_of_slot(); i++)
+	{
+		_motor[i].Set(_mem_pwm);
+	}
+}
+
+//----------------------------------------------------------------------//
+
+void Wheel::operator ++ (int i)
+{
+	if (_mem_pwm < 31)	_mem_pwm ++;
+}
+
+//----------------------------------------------------------------------//
+
+void Wheel::operator -- (int i)
+{
+	if (_mem_pwm > 0)	_mem_pwm --;
 }
 
 //----------------------------------------------------------------------//
 
 /************************************************************************/
+

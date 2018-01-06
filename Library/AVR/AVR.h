@@ -6,6 +6,7 @@
 #include <util/delay.h>
 
 #include "Timer/GeneralTimer/GeneralTimer.h"
+#include "Timer/NormalTimer/NormalTimer.h"
 #include "Uart/Uart.h"
 #include "IO/IO.h"
-#include "ADChan/ADChan.h"
+#include "ADChange/ADChange.h"

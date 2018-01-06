@@ -35,7 +35,7 @@ inline Signal Want_to_make_reverse(const YesNo _yes_no)
 
 //----------------------------------------------------------------------//
 
-inline Signal Convert_to_Signal (const int _data)
+inline Signal To_Signal (const int _data)
 {
 	return (Signal)(_data & 3);
 }

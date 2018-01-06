@@ -16,6 +16,7 @@ typedef unsigned long long int ullint;
 typedef uchar DataBit8;
 typedef usint DataBit16;
 
-typedef uchar Byte;
+typedef char Byte;
+typedef uchar uByte;
 
 /************************************************************************/

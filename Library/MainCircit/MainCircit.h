@@ -18,14 +18,17 @@
 #include "MDC/Omuni.h"
 
 #include "Valve/Valve.h"
+#include "Valve/ValveSingle.h"
+#include "Valve/ValveDouble.h"
 
 #include "Controller/Controller.h"
 #include "Controller/Dualshock2.h"
 #include "Controller/WiiClassic.h"
 
-typedef IoInBit Sensor;
-typedef Sensor LimitSensor;
-typedef Sensor PhotoSensor;
+#include "Controller/Controller28bit.h"
 
-typedef IoOutBit LED;
-typedef LED Vacuum;
+#include "Lolita/Lolita.h"
+
+#include "Servo/Servo.h"
+
+#include "MainCircit_type.h"

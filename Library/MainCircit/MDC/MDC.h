@@ -9,7 +9,9 @@ private:
 	
 	UartTransmit _mem_uart;
 	
-	Byte _mem_num_of_slot :3;
+	uByte _mem_num_of_slot :2;
+	
+	Pwm _mem_pwm : 5;
 	
 protected:
 	
@@ -17,31 +19,40 @@ protected:
 	
 public:
 	
-	MDC (MdcNum _num_mdc, int _num_of_slot = 4);
-	MDC (MdcNum _num_mdc, UartNum _uart_adrs, int _num_of_slot = 4);
+	MDC(MotorNumber _min_number, Byte _num_of_slot = 4);
+	MDC(MotorNumber _min_number, UartNum _uart_adrs, Byte _num_of_slot = 4);
 	
-	void Set_uart (UartTransmit *_uart);
+	uByte Get_num_of_slot();
 	
-	void Set_direct (Signal _sig);
-	void Set_direct (Pwm _pwm);
-	void Set_direct (Signal _sig, Pwm _pwm, BOOL _is_steps_on);
+	UartTransmit * Get_uart();
 	
-	void Set (Signal _sig);
-	void Set (Pwm _pwm);
-	void Set (Signal _sig, Pwm _pwm, BOOL _is_steps_on);
+	void Set(Pwm _pwm);
+	void Set(Signal _sig);
 	
-	void Can_you_want_use_steps (YesNo _yes_no);
+	void Set_non_memory(Pwm _pwm);
 	
-	void LCD_signal (LcdAdrs _adrs);
-	void LCD_pwm (LcdAdrs _adrs);
+	Pwm Get_pwm();
 	
-	void Transmit ();
-	void Transmit (UartTransmit &_uart);
+	void Want_to_use_steps(YesNo _yes_no);
 	
-	Motor & operator [] (MdNum _num);
+	void Display_pwm(LcdAdrs _adrs);
+	void Display_signal(LcdAdrs _adrs);
 	
-	Signal	operator = (Signal _sig);
+	void Transmit();
+	void Transmit(UartTransmit &_uart);
+	
+	void Transmit_clear();
+	void Transmit_clear(UartTransmit &_uart);
+	
+	Motor & Slot(MotorNumber _slot);
+	
+	Motor & operator [] (MotorNumber _slot);
+	
+	void operator ++ (int );
+	void operator -- (int );
+	
 	Pwm		operator = (Pwm _pwm);
+	Signal	operator = (Signal _sig);
 };
 
 /************************************************************************/

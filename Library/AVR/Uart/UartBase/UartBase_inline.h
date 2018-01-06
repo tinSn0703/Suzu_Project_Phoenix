@@ -18,28 +18,42 @@ inline UartNum UartBase :: Get_uart_num ()
 
 inline void UartSet :: Enable_UCSRB (usint _bit)
 {
-	_UCSRB_ |= (1 << _bit);
+	UCSRB |= (1 << _bit);
 }
 
 //----------------------------------------------------------------------//
 
 inline void UartSet :: Disable_UCSRB (usint _bit)
 {
-	_UCSRB_ &= ~(1 << _bit);
+	UCSRB &= ~(1 << _bit);
 }
 
 //----------------------------------------------------------------------//
 
 inline BOOL UartSet :: Is_true_the_UCSRB (usint _bit)
 {
-	return Is_true_the(_UCSRB_, _bit);
+	return Is_true_the(UCSRB, _bit);
 }
 
 //----------------------------------------------------------------------//
 
 inline BOOL UartSet :: Is_it_receive()
 {
-	return Is_true_the(_UCSRA_, RXC);
+	return Is_true_the(UCSRA, RXC);
+}
+
+//----------------------------------------------------------------------//
+
+inline UartData8bit UartSet :: Read_UDR()
+{
+	return UDR;
+}
+
+//----------------------------------------------------------------------//
+
+inline void UartSet :: Write_UDR(const UartData8bit _write)
+{
+	UDR = _write;
 }
 
 //----------------------------------------------------------------------//

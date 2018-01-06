@@ -2,61 +2,62 @@
 
 #include <akilcd/akilcd.h>
 #include <Others/BOOL.h>
-#include <AVR/AVR.h>
+#include <AVR/Timer/GeneralTimer.h>
+#include <AVR/Uart/Uart.h>
 #include <MainCircit/Valve/Valve.h>
 
 /************************************************************************/
 
 //----------------------------------------------------------------------//
 
-Valve :: Valve (UartNum _arg_uart_adrs)
+Valve :: Valve(const UartNum _uart_num)
 
-	: _mem_uart(_arg_uart_adrs)
-{}
-
-//----------------------------------------------------------------------//
-
-Valve :: Valve (UartNum _arg_uart_adrs, ValveData _arg_init_data)
-
-	: _mem_uart(_arg_uart_adrs)
+	: _mem_uart(_uart_num)
 {
-	Set(_arg_init_data);
+	_mem_past_data = 0x01;
 }
 
 //----------------------------------------------------------------------//
 
-void Valve :: Transmit ()
+Valve :: Valve(const UartNum _uart_num, const ValveData _init_data)
+
+	: _mem_uart(_uart_num)
 {
-	_mem_uart.Disable_9bit();
+	Set(_init_data);
 	
-	_mem_uart.Transmit_8bit(Get());
+	_mem_past_data = _init_data + 1;
 }
 
 //----------------------------------------------------------------------//
 
-void Valve :: Transmit (UartTransmit &_arg_uart)
+Uart::ModeTransmit * Valve :: Get_uart()
 {
-	_arg_uart.Disable_9bit();
-	
-	_arg_uart.Transmit_8bit(Get());
+	return &_mem_uart;
 }
 
 //----------------------------------------------------------------------//
 
-void Valve :: Transmit_clear ()
+void Valve :: Write(Uart::ModeTransmit &_uart)
 {
-	_mem_uart.Disable_9bit();
-	
-	_mem_uart.Transmit_8bit(0x00);
+	if (_mem_past_data != Get())
+	{
+		_uart.Disable_9bit();
+		
+		_uart.Transmit_8bit(Get());
+		
+		_mem_past_data = Get();
+	}
 }
 
 //----------------------------------------------------------------------//
 
-void Valve :: Transmit_clear (UartTransmit &_arg_uart)
+void Valve :: Write_clear (Uart::ModeTransmit &_uart)
 {
-	_arg_uart.Disable_9bit();
+	_uart.Disable_9bit();
 	
-	_arg_uart.Transmit_8bit(0x00);
+	_uart.Transmit_8bit(0x00);
 }
 
 //----------------------------------------------------------------------//
+
+/************************************************************************/

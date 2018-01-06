@@ -1,18 +1,8 @@
 /*
- * GeneralTimer.h
- *
- * Created: 2017/03/04 15:45:02
- *  Author: Suzu
- *
  *	Timer5‚ðŽg—p
  */ 
 
 #pragma once
-
-/************************************************************************/
-
-#define _CHANGE_COUNT_NUM_ 9.765625
-#define _CHANGE_MS_ 0.1024
 
 /************************************************************************/
 
@@ -26,59 +16,30 @@ typedef enum
 }
 Clock;
 
-typedef ullint DataTime;
-typedef DataBit16 MeasureTime;
+typedef ullint CountValue;
+typedef DataBit16 mSecond;
 
 /************************************************************************/
 
-typedef union
+namespace GeneralTimer
 {
-	struct PartsTime
-	{
-		DataBit16	_low :16;
-		Byte	_high :8;
-	}
-	_counter;
-	
-	DataTime _all :24;
+
+/************************************************************************/
+
+void Initialize();
+
+CountValue Read();
+
+CountValue Set_counter(mSecond _measure_time_ms);
+
+YesNo Is_current_bigger_than(CountValue _time);
+
+CountValue Change_count_value(mSecond _measure_time_ms);
+
+mSecond Change_ms(CountValue _time);
+
+/************************************************************************/
+
 }
-Time;
 
 /************************************************************************/
-
-#ifdef __cplusplus
-
-	extern "C"	{
-
-#endif /*__cplusplus*/
-
-/************************************************************************/
-
-Byte Read_counter_high ();
-
-void Timer_Initialize ();
-
-inline DataTime Timer_Read ();
-
-inline void Timer_Set (Time *_timer, MeasureTime _time_ms);
-
-inline BOOL Timer_Comp (const Time *_time);
-
-inline MeasureTime Timer_Change (DataTime _time);
-
-/************************************************************************/
-
-#ifdef __cplusplus
-
-	};
-
-#endif /*__cplusplus*/
-
-/************************************************************************/
-
-#include "GeneralTimer_inline.h"
-
-/************************************************************************/
-
-#undef _CHANGE_COUNT_NUM_
-#undef _CHANGE_MS_

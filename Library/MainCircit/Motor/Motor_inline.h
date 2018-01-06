@@ -4,27 +4,27 @@
 
 //----------------------------------------------------------------------//
 
-inline void Motor :: Set_uart (UartTransmit *_arg_uart)
+inline UartTransmit * Motor :: Get_uart()
 {
-	_mem_uart = _arg_uart;
+	return _mem_uart;
 }
 
 //----------------------------------------------------------------------//
 
-inline Signal Motor :: operator = (const Signal _arg_sig)
+inline Signal Motor :: operator = (const Signal _sig)
 {
-	Set(_arg_sig);
+	Motor :: Set(_sig);
 
-	return _arg_sig;
+	return _sig;
 }
 
 //----------------------------------------------------------------------//
 
-inline Pwm Motor :: operator = (const Pwm _arg_pwm)
+inline Pwm Motor :: operator = (const Pwm _pwm)
 {
-	Set(_arg_pwm);
+	Motor :: Set(_pwm);
 	
-	return _arg_pwm;
+	return _pwm;
 }
 
 //----------------------------------------------------------------------//

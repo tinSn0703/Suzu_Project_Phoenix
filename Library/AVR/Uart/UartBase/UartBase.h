@@ -6,22 +6,18 @@
 
 /************************************************************************/
 
-#ifdef __cplusplus
-
-/************************************************************************/
-
 namespace ClassUart
 {
 
 /************************************************************************/
 
-#define _UCSRA_	_SFR_MEM8(UartBase :: Get_uart_num()  + 0)
-#define _UCSRB_	_SFR_MEM8(UartBase :: Get_uart_num()  + 1)
-#define _UCSRC_	_SFR_MEM8(UartBase :: Get_uart_num()  + 2)
-#define _UBRRL_	_SFR_MEM8(UartBase :: Get_uart_num()  + 4)
-#define _UBRRH_	_SFR_MEM8(UartBase :: Get_uart_num()  + 5)
-#define _UDR_	_SFR_MEM8(UartBase :: Get_uart_num()  + 6)
-#define _UBRR_	_SFR_MEM16(UartBase :: Get_uart_num() + 4)
+#define UCSRA	_SFR_MEM8(UartBase::Get_uart_num()	+ 0)
+#define UCSRB	_SFR_MEM8(UartBase::Get_uart_num()	+ 1)
+#define UCSRC	_SFR_MEM8(UartBase::Get_uart_num()	+ 2)
+#define UBRRL	_SFR_MEM8(UartBase::Get_uart_num()	+ 4)
+#define UBRRH	_SFR_MEM8(UartBase::Get_uart_num()	+ 5)
+#define UDR		_SFR_MEM8(UartBase::Get_uart_num()	+ 6)
+#define UBRR	_SFR_MEM16(UartBase::Get_uart_num()	+ 4)
 
 /************************************************************************/
 
@@ -33,20 +29,20 @@ private:
 	
 protected:
 	
-	void Initialize ();
-	void Initialize (UartNum _adrs);
+	void Initialize();
+	void Initialize(UartNum _adrs);
 	
 public:
 	
-	UartBase ();
-	UartBase (UartNum _uart_adrs);
+	UartBase();
+	UartBase(UartNum _uart_adrs);
 	
 	UartNum Get_uart_num();
 };
 
 /************************************************************************/
 
-class UartSet : virtual protected UartBase
+class UartSet : public UartBase
 {
 protected:
 	
@@ -54,10 +50,14 @@ protected:
 	void Disable_UCSRB(usint _bit);
 	BOOL Is_true_the_UCSRB(usint _bit);
 	
+	UartData8bit Read_UDR();
+	
+	void Write_UDR(UartData8bit _write);
+	
 public:
 	
-	UartSet ();
-	UartSet (UartNum _uart_adrs);
+	UartSet();
+	UartSet(UartNum _uart_adrs);
 	
 	BOOL Is_it_receive();
 	
@@ -78,20 +78,6 @@ public:
 
 /************************************************************************/
 
-#ifndef _UART_SOURCE_
-#undef _UCSRA_
-#undef _UCSRB_
-#undef _UCSRC_
-#undef _UBRRL_
-#undef _UBRRH_
-#undef _UDR_
-#undef _UBRR_
-#endif
-
-/************************************************************************/
-
 };
 
 /************************************************************************/
-
-#endif

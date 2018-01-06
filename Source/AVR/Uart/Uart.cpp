@@ -1,10 +1,23 @@
 
-
-#define _UART_SOURCE_
-
 #include <avr/io.h>
+#include <util/delay.h>
 #include <Others/BOOL.h>
 #include <AVR/Uart/Uart.h>
+
+/************************************************************************/
+
+namespace Uart
+{
+
+/************************************************************************/
+
+#define UCSRA	_SFR_MEM8(UartBase::Get_uart_num()	+ 0)
+#define UCSRB	_SFR_MEM8(UartBase::Get_uart_num()	+ 1)
+#define UCSRC	_SFR_MEM8(UartBase::Get_uart_num()	+ 2)
+#define UBRRL	_SFR_MEM8(UartBase::Get_uart_num()	+ 4)
+#define UBRRH	_SFR_MEM8(UartBase::Get_uart_num()	+ 5)
+#define UDR		_SFR_MEM8(UartBase::Get_uart_num()	+ 6)
+#define UBRR	_SFR_MEM16(UartBase::Get_uart_num()	+ 4)
 
 /************************************************************************/
 /*	UartReceive															*/
@@ -12,58 +25,88 @@
 
 //----------------------------------------------------------------------//
 
-UartReceive :: UartReceive()	{}
+ModeReceive :: ModeReceive(const UartNum _uart_num)
 
-//----------------------------------------------------------------------//
-
-UartReceive :: UartReceive(const UartNum _uart_num)
-
-	: ClassUart :: UartBase(_uart_num)
-
+	: UartBase(_uart_num)
 {
+	_mem_is_error_happen = NO;
+	
 	Enable_receive();
 }
 
 //----------------------------------------------------------------------//
 
-UartData9bit UartReceive :: Receive_9bit()
+void ModeReceive :: Check_error()
 {
-	while ( ! (_UCSRA_ & (1 << RXC)));	//受信が完了するまで待機
-	
-	if (_UCSRA_ & (1 << FE))
+	if (UCSRA & ((1 << FE) | (1 << DOR) | (1 << UPE))) //エラーチェック
 	{
-		_mem_data_b |= _UDR_ & 0x00;
-		
-		return _mem_data_b;
+		_mem_is_error_happen = YES;	//エラー
 	}
-	
-	//受信
-	const UartData9bit _receive_data = 
-	(
-		Is_true_the(_UCSRB_, RXB8) ? (0x100 | _UDR_) : _UDR_
-	);
-	
-	_mem_data_b = _receive_data;
-	
-	return _receive_data;
+	else
+	{
+		_mem_is_error_happen = NO;	//問題なし
+	}
 }
 
 //----------------------------------------------------------------------//
 
-UartData8bit UartReceive :: Receive_8bit()
+YesNo ModeReceive :: Is_receive_finished()
 {
-	while ( ! (_UCSRA_ & (1 << RXC)));	//受信が完了するまで待機
+	return Is_true_the(UCSRA, RXC);
+}
+
+//----------------------------------------------------------------------//
+
+void ModeReceive :: Enable_receive()
+{
+	UCSRB |= (1 << RXEN);
+}
+
+//----------------------------------------------------------------------//
+
+void ModeReceive :: Disable_receive()
+{
+	UCSRB &= ~(1 << RXEN);
+}
+
+//----------------------------------------------------------------------//
+
+UartData8bit ModeReceive :: Get_UDR_8bit()
+{
+	Check_error();
 	
- 	if (_UCSRA_ & (1 << FE))
- 	{
-		_mem_data_b |= _UDR_ & 0x00;
-		
-		return _mem_data_b;
- 	}
+	return UDR;	//受信
+}
+
+//----------------------------------------------------------------------//
+
+UartData9bit ModeReceive :: Get_UDR_9bit()
+{
+	Check_error();
 	
-	_mem_data_b = _UDR_;	//受信
+	return Is_true_the(UCSRB, RXB8) ? (0x100 | UDR) : UDR;	//受信
+}
+
+//----------------------------------------------------------------------//
+
+UartData8bit ModeReceive :: Receive_8bit()
+{
+	while ( ! (UCSRA & (1 << RXC)));	//受信が完了するまで待機
 	
-	return _mem_data_b;
+	Check_error();
+	
+	return UDR;
+}
+
+//----------------------------------------------------------------------//
+
+UartData9bit ModeReceive :: Receive_9bit()
+{
+	while ( ! (UCSRA & (1 << RXC)));	//受信が完了するまで待機
+	
+	Check_error();
+	
+	return ((UCSRB & (1 << RXB8)) ? (0x100 | UDR) : UDR);
 }
 
 //----------------------------------------------------------------------//
@@ -74,84 +117,69 @@ UartData8bit UartReceive :: Receive_8bit()
 
 //----------------------------------------------------------------------//
 
-UartTransmit :: UartTransmit()	{}
+ModeTransmit :: ModeTransmit (const UartNum _uart_num)
 
-//----------------------------------------------------------------------//
-
-UartTransmit :: UartTransmit (const UartNum _uart_num)
-
-	: ClassUart :: UartBase(_uart_num)
-
+	: UartBase(_uart_num)
 {
 	Enable_transmit();
 }
 
 //----------------------------------------------------------------------//
 
-void UartTransmit :: Transmit_9bit (const UartData9bit _transmit_data)
-{	
-	while ( ! (_UCSRA_ & (1 << UDRE)));	//UDRが空になるまで待機
+void ModeTransmit :: Transmit_8bit (const UartData8bit _transmit_data)
+{
+	while ( ! (UCSRA & (1 << UDRE))); //送信可能になるまで待機
 	
-	if (Is_true_the(_transmit_data, 8))	//8bit目を送信
+	UDR = _transmit_data;
+	
+	_delay_us(20);
+}
+
+//----------------------------------------------------------------------//
+
+void ModeTransmit :: Transmit_9bit (const UartData9bit _transmit_data)
+{
+	while ( ! (UCSRA & (1 << UDRE))); //送信可能になるまで待機
+	
+	if (_transmit_data & (1 << 8))	//8bit目を送信
 	{
-		_UCSRB_ |= (1 << TXB8);
+		UCSRB |= (1 << TXB8);
 	}
 	else
 	{
-		_UCSRB_ &= ~(1 << TXB8);
+		UCSRB &= ~(1 << TXB8);
 	}
 	
-	_UDR_ = (_transmit_data & 0xff);	//送信
+	UDR = (_transmit_data & 0xff);	//送信
 	
-	while ( ! (_UCSRA_ & (1 << TXC)));	//送信が完了するまで待機
-	
-	_UCSRA_ |= (1 << TXC);	//送信完了フラグを降ろす
+	_delay_us(20);
 }
 
 //----------------------------------------------------------------------//
 
-void UartTransmit :: Transmit_8bit (const UartData8bit _transmit_data)
+YesNo ModeTransmit :: Is_transmit_possible()
 {
-	while ( ! (_UCSRA_ & (1 << UDRE)));	//UDRが空になるまで待機
-	
-	_UDR_ = _transmit_data;	//送信
-	
-	while ( ! (_UCSRA_ & (1 << TXC)));	//送信が完了するまで待機
-	
-	_UCSRA_ |= (1 << TXC);	//送信完了フラグを降ろす
+	return Are_true_the(UCSRA, UDRE, TXC);
 }
 
 //----------------------------------------------------------------------//
 
-/************************************************************************/
-/*	Uart																*/
-/************************************************************************/
-
-//----------------------------------------------------------------------//
-
-Uart :: Uart()	{}
-
-//----------------------------------------------------------------------//
-
-Uart :: Uart(const UartNum _uart_adrs)
+void ModeTransmit :: Enable_transmit()
 {
-	Initialize(_uart_adrs);
-	
-	Enable_receive();
-	Enable_transmit();
+	UCSRB |= (1 << TXEN);
+}
+
+//----------------------------------------------------------------------//
+
+void ModeTransmit :: Disable_transmit()
+{
+	UCSRB &= ~(1 << TXEN);
 }
 
 //----------------------------------------------------------------------//
 
 /************************************************************************/
 
-#undef _UART_SOURCE_
-#undef _UCSRA_
-#undef _UCSRB_
-#undef _UCSRC_
-#undef _UBRRL_
-#undef _UBRRH_
-#undef _UDR_
-#undef _UBRR_
+}
 
 /************************************************************************/

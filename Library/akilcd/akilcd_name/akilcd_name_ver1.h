@@ -44,20 +44,20 @@ inline void Lcd_put_str (const LcdAdrs _adrs, const char _str[])
 /**
  *	　数値をLCDに表示する関数。
  * 
- *	_adrs		: 表示の先頭の場所
- *	_put_data	: 表示する数値
- *	_digit		: 表示したい桁数
- *	decimal		: 表示したい進数 (2 ～ 16進数まで)
+ *	_adrs	: 表示の先頭の場所
+ *	_number	: 表示する数値
+ *	_digit	: 表示したい桁数
+ *	decimal	: 表示したい進数 (2 ～ 16進数まで)
  */
 inline void Lcd_put_num
 (
 	const LcdAdrs	_adrs,
-	unsigned long	_put_data,
-	const Digit	_digit,
+	unsigned long	_number,
+	const Digit		_digit,
 	const Decimal	_decimal
 )
 {
-	PUT_NUM(_adrs, _put_data, _digit, _decimal);
+	PUT_NUM(_adrs, _number, _digit, _decimal);
 }
 
 //----------------------------------------------------------------------//

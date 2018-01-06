@@ -1,6 +1,9 @@
 
 #pragma once
 
+namespace ClassIO
+{
+
 /************************************************************************/
 
 //----------------------------------------------------------------------//
@@ -12,21 +15,33 @@ inline IoAdrs IoBase :: Get_adrs()
 
 //----------------------------------------------------------------------//
 
-inline Byte IoBase :: PORT ()
+inline uByte IoBase :: PORT()
 {
 	return (*_r_port)();
 }
 
 //----------------------------------------------------------------------//
 
-inline void IoBase :: PORT (const Byte _data)
+inline uByte IoBase :: PORT(const uByte _data)
 {
-	return (*_w_port)(_data);
+	(*_w_port)(_data);
+	
+	return (*_r_port)();
 }
 
 //----------------------------------------------------------------------//
 
-inline Byte IoBase :: PIN ()
+inline uByte IoBase :: PORT(const IoBit _bit, const BOOL _is_on)
+{
+	(*_w_port)((*_r_port)() & ~(_is_on << _bit));
+	(*_w_port)((*_r_port)() |  (_is_on << _bit));
+	
+	return (*_r_port)();
+}
+
+//----------------------------------------------------------------------//
+
+inline uByte IoBase :: PIN()
 {
 	return (*_r_pin)();
 }
@@ -34,4 +49,6 @@ inline Byte IoBase :: PIN ()
 //----------------------------------------------------------------------//
 
 /************************************************************************/
+
+}
 

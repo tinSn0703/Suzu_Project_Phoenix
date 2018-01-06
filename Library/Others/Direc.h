@@ -8,14 +8,61 @@
 
 /************************************************************************/
 
+namespace Direc
+{
+
+enum Direc
+{
+	NORTH = 1,
+	SOUTH = 2,
+	
+	EAST = 3,
+	WEST = 4,
+	
+	CENTER = 0
+};
+
+};
+
+namespace Test
+{
+
+class Direc
+{
+public:
+	
+	enum _Direc
+	{
+		CENTER	= 0,
+		
+		NORTH = 1,
+		SOUTH = 2,
+		
+		EAST = 3,
+		WEST = 4,
+	}
+	_data :3;
+	
+	Direc()	{	_data = CENTER;	}
+		
+	int operator = (int i)
+	{
+		_data = (_Direc)i;
+		
+		return i;
+	} 
+};
+
+}
+
 //----------------------------------------------------------------------//
 
 typedef enum
 {
-	EAST = 0b01,
-	WEST = 0b10,
+	EAST = 1,
+	WEST = 2,
 	
-	CENTER_X = 0b11
+	CENTER_X = 3
 }
 DirecX;
 
@@ -23,45 +70,14 @@ DirecX;
 
 typedef enum
 {
-	NORTH = 0b01,
-	SOUTH = 0b10,
+	NORTH = 1,
+	SOUTH = 2,
 	
-	CENTER_Y = 0b11
+	CENTER_Y = 3
 }
 DirecY;
 
 //----------------------------------------------------------------------//
-
-typedef enum
-{
-	DIREC_C_N = 0b1101,
-	DIREC_E_N = 0b0101,
-	DIREC_E_C = 0b0111,
-	DIREC_E_S = 0b0110,
-	DIREC_C_S = 0b1110,
-	DIREC_W_S = 0b1010,
-	DIREC_W_C = 0b1011,
-	DIREC_W_N = 0b1001,
-	DIREC_C_C = 0b1111
-}
-DataDirec;
-
-//----------------------------------------------------------------------//
-
-/************************************************************************/
-
-typedef union
-{
-	struct SubUnionDirec
-	{
-		DirecX _x :2;
-		DirecY _y :2;
-	}
-	_sub;
-	
-	DataDirec _all :4;
-}
-Direc;
 
 /************************************************************************/
 
@@ -79,7 +95,7 @@ inline DirecY Reversal_DirecY (const DirecY _direc)
 
 //----------------------------------------------------------------------//
 
-inline DirecY Convert_to_DirecY (const int _data)
+inline DirecY To_DirecY (const int _data)
 {
 	return ((_data & 3) ? (DirecY)(_data & 3) : CENTER_Y);
 }
@@ -98,62 +114,17 @@ inline DirecX Reversal_DirecX (const DirecX _direc)
 
 //----------------------------------------------------------------------//
 
-inline DirecX Convert_to_DirecX (const int _data)
+inline DirecX To_DirecX (const int _data)
 {
 	return ((_data & 3) ? (DirecX)(_data & 3) : CENTER_X);
 }
 
 //----------------------------------------------------------------------//
 
-inline Direc Combine_with_Direc (const DirecX _x, const DirecY _y)
-{
-	Direc _temp;
-	
-	_temp._sub._x = _x; 
-	_temp._sub._y = _y;
-	
-	return _temp;
-}
-
-//----------------------------------------------------------------------//
-
-inline void Shift_Direc_by_45deg (Direc *_direc)
-{
-	const DirecX _temp_x = 
-	Convert_to_DirecX
-	(
-		(_direc->_sub._x) &
-		(_direc->_sub._y)
-	);
-	
-	const DirecY _temp_y = 
-	Convert_to_DirecY
-	(
-		(_direc->_sub._y) & 
-		Reversal_DirecX(_direc->_sub._x)
-	);
-
-	_direc->_sub._x = _temp_x;
-	_direc->_sub._y = _temp_y;
-}
-
-//----------------------------------------------------------------------//
-
-inline void Shift_Direc_by_90deg (Direc *_direc)
-{
-	const DirecX _temp_x = (DirecX)					(_direc->_sub._y);
-	const DirecY _temp_y = (DirecY)Reversal_DirecX	(_direc->_sub._x);
-
-	_direc->_sub._x = _temp_x;
-	_direc->_sub._y = _temp_y;
-}
-
-//----------------------------------------------------------------------//
-
 inline void Shift_DirecXY_by_45deg (DirecX *_x, DirecY *_y)
 {
-	const DirecX _temp_x = Convert_to_DirecX((*_x) &				(*_y));
-	const DirecY _temp_y = Convert_to_DirecY((*_y) & Reversal_DirecX(*_x));
+	const DirecX _temp_x = To_DirecX((*_x) &				(*_y));
+	const DirecY _temp_y = To_DirecY((*_y) & Reversal_DirecX(*_x));
 
 	*_x = _temp_x;
 	*_y = _temp_y;
@@ -172,14 +143,6 @@ inline void Shift_DirecXY_by_90deg (DirecX *_x, DirecY *_y)
 
 //----------------------------------------------------------------------//
 
-/************************************************************************/
-
-#ifdef __cplusplus
-
-/************************************************************************/
-
-//----------------------------------------------------------------------//
-
 inline DirecY operator ~ (const DirecY _direc)
 {
 	return Reversal_DirecY(_direc);
@@ -194,14 +157,5 @@ inline DirecX operator ~ (const DirecX _direc)
 
 //----------------------------------------------------------------------//
 
-inline Direc operator + (const DirecX _x, const DirecY _y)
-{
-	return Combine_with_Direc(_x, _y);
-}
-
-//----------------------------------------------------------------------//
-
 /************************************************************************/
-
-#endif /*__cplusplus*/
 

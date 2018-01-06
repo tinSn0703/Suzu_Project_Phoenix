@@ -1,7 +1,12 @@
 
 #include <avr/io.h>
-#include <Others/BOOL.h>
+#include <Others/Others.h>
 #include <AVR/IO/Io.h>
+
+/************************************************************************/
+
+namespace IO
+{
 
 /************************************************************************/
 /*	IoOut																*/
@@ -9,10 +14,21 @@
 
 //----------------------------------------------------------------------//
 
-IoOut :: IoOut(const IoAdrs _io_adrs)
+ModeOut :: ModeOut()	{}
+
+//----------------------------------------------------------------------//
+
+ModeOut :: ModeOut(const IoNum _io_adrs)
 
 	: IoBase(_io_adrs, 0xff)
 {}
+
+//----------------------------------------------------------------------//
+
+void IO::ModeOut :: Reset(const IoNum _io_adrs)
+{
+	Initialize(_io_adrs, 0xff);
+}
 
 //----------------------------------------------------------------------//
 
@@ -22,23 +38,50 @@ IoOut :: IoOut(const IoAdrs _io_adrs)
 
 //----------------------------------------------------------------------//
 
-IoIn :: IoIn(const IoAdrs _io_adrs)
+ModeIn :: ModeIn()	{}
+
+//----------------------------------------------------------------------//
+
+ModeIn :: ModeIn(const IoNum _io_adrs)
 
 	: IoBase(_io_adrs, 0x00)
 {}
 
 //----------------------------------------------------------------------//
 
+void IO::ModeIn :: Reset(const IoNum _io_adrs)
+{
+	Initialize(_io_adrs, 0x00);
+}
+
+//----------------------------------------------------------------------//
+
 /************************************************************************/
-/*	IoOutBit															*/
+
+namespace Bit
+{
+
 /************************************************************************/
 
 //----------------------------------------------------------------------//
 
-IoOutBit :: IoOutBit(const IoAdrs _io_adrs, const IoBit _bit)
+ModeOut :: ModeOut()	{}
+
+//----------------------------------------------------------------------//
+
+ModeOut :: ModeOut(const IoNum _io_adrs, const IoBit _bit)
 
 	: IoBase(_io_adrs, _bit, TRUE)
 {}
+
+//----------------------------------------------------------------------//
+
+void ModeOut :: Reset(const IoNum _io_adrs, const IoBit _bit)
+{
+	Initialize(_io_adrs, _bit, TRUE);
+	
+	_mem_bit = _bit;
+}
 
 //----------------------------------------------------------------------//
 
@@ -48,9 +91,41 @@ IoOutBit :: IoOutBit(const IoAdrs _io_adrs, const IoBit _bit)
 
 //----------------------------------------------------------------------//
 
-IoInBit :: IoInBit(const IoAdrs _io_adrs, const IoBit _bit)
-
-	: IoBase(_io_adrs, _bit, FALSE)
-{}
+ModeIn :: ModeIn()
+{
+	_mem_read_data = LOW;
+	
+	_mem_is_read_reverse = NO;
+}
 
 //----------------------------------------------------------------------//
+
+ModeIn :: ModeIn(const IoNum _io_adrs, const IoBit _bit)
+
+	: IoBase(_io_adrs, _bit, FALSE)
+{
+	_mem_read_data = LOW;
+	
+	_mem_is_read_reverse = NO;
+	
+	_mem_bit = _bit;
+}
+
+//----------------------------------------------------------------------//
+
+void ModeIn :: Reset(const IoNum _io_adrs, const IoBit _bit)
+{
+	Initialize(_io_adrs, _bit, FALSE);
+	
+	_mem_bit = _bit;
+}
+
+//----------------------------------------------------------------------//
+
+/************************************************************************/
+
+}
+
+}
+
+/************************************************************************/

@@ -68,7 +68,7 @@ inline char * Str_add (char _str[], const char _str_add[])
 
 //----------------------------------------------------------------------//
 
-inline char Convert_hex_to_char (const Byte _num)
+inline char Convert_hex_to_char (const uByte _num)
 {
 	switch (_num & 0xf)
 	{
@@ -95,7 +95,7 @@ inline char Convert_hex_to_char (const Byte _num)
 
 //----------------------------------------------------------------------//
 
-inline Byte Convert_char_to_hex (const char _char)
+inline uByte Convert_char_to_hex (const char _char)
 {
 	switch (_char)
 	{

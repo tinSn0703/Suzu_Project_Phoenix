@@ -1,8 +1,9 @@
 
-
 #include <akilcd/akilcd.h>
 #include <Others/Others.h>
-#include <AVR/AVR.h>
+#include <AVR/Uart/Uart.h>
+#include <MainCircit/Direction.h>
+#include <MainCircit/Signal.h>
 #include <MainCircit/Motor/Motor.h>
 #include <MainCircit/MDC/MDC.h>
 
@@ -10,44 +11,115 @@
 
 //----------------------------------------------------------------------//
 
-MDC :: MDC (const MdcNum _num, const int _num_of_slot)
+MDC::MDC(const UartNum _uart_num, const Byte _num_of_slot)
+
+	 : _uart(_uart_num)
 {
-	_mem_num_of_slot = To_within(_num_of_slot, 4, 2) - 1;
+	MDC::_num_of_slot = To_within(_num_of_slot, 4, 2) - 1;
 	
-	for (usint _num_md = 0; _num_md <= _mem_num_of_slot; _num_md++)
+	_motor[0].Reset(0);
+	_motor[1].Reset(1);
+	_motor[2].Reset(2);
+	_motor[3].Reset(3);
+}
+
+//----------------------------------------------------------------------//
+
+void MDC::Set(const Signal _sig)
+{
+	for (uByte i = 0; i <= _num_of_slot; i++)
 	{
-		Motor _temp(_num, (MdNum)_num_md);
-		
-		_mem_md[_num_md] = _temp;
+		_motor[i].Set(_sig);
 	}
 }
 
 //----------------------------------------------------------------------//
 
-MDC :: MDC (const MdcNum _num, const UartNum _adrs, const int _num_of_slot)
-
-	 : _mem_uart(_adrs)
+void MDC::Set(const Pwm _pwm)
 {
-	_mem_num_of_slot = To_within(_num_of_slot, 4, 2) - 1;
-	
-	for (usint _num_md = 0; _num_md <= _mem_num_of_slot; _num_md++)
+	for (uByte i = 0; i <= _num_of_slot; i++)
 	{
-		Motor _temp(_num, (MdNum)_num_md);
-		
-		_mem_md[_num_md] = _temp;
-		_mem_md[_num_md].Set_uart(&_mem_uart);
+		_motor[i].Set(_pwm)
 	}
 }
 
 //----------------------------------------------------------------------//
 
-void MDC :: Set (const Signal _arg_sig)
+void MDC::Set_steps(const StepsMode _steps_mode)
 {
-	MDC :: Set_direct(_arg_sig);
-	
-	if (Is_Signal_rotation(_arg_sig))
+	for (uByte i = 0; i <= _num_of_slot; i++)
 	{
-		MDC :: Set_direct(0);
+		_motor[i].Set_steps(_steps_mode);
+	}
+}
+
+//----------------------------------------------------------------------//
+
+Pwm MDC::Get_max_pwm()
+{
+	Pwm _max_pwm = 0;
+	
+	for (uByte i = 1; i <= _num_of_slot; i++)
+	{
+		if (_motor[i] != SIGNAL_BREAK)
+		{
+			if (_max_pwm < _motor[i].Get_pwm())
+			{
+				_max_pwm = _motor[i].Get_pwm();
+			}
+		}
+	}
+
+	return _max_pwm;
+}
+
+//----------------------------------------------------------------------//
+
+void MDC::Write()
+{
+	for (uByte i = 0; i <= _num_of_slot; i++)
+	{
+		_motor[i].Write(_uart);
+	}
+}
+
+//----------------------------------------------------------------------//
+
+void MDC::Write_clear()
+{
+	for (uByte i = 0; i <= _num_of_slot; i++)
+	{
+		_motor[i].Write_clear(_uart);
+	}
+}
+
+//----------------------------------------------------------------------//
+
+void MDC::Display_signal(const LcdAdrs _adrs)
+{
+	for (uByte i = 0; i <= _num_of_slot; i++)
+	{
+		_motor[i].Display_signal(_adrs + 2 * i);
+	}
+}
+
+//----------------------------------------------------------------------//
+
+void MDC::Display_power(const LcdAdrs _adrs)
+{
+	for (uByte i = 0; i <= _num_of_slot; i++)
+	{
+		_motor[i].Display_power(_adrs + 3 * i);
+	}
+}
+
+//----------------------------------------------------------------------//
+
+void MDC::Display_pwm(const LcdAdrs _adrs)
+{
+	for (uByte i = 0; i <= _num_of_slot; i++)
+	{
+		_motor[i].Display_pwm(_adrs + 3 * i);
 	}
 }
 

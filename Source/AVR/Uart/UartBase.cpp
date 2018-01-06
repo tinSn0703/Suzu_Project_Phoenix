@@ -1,6 +1,4 @@
 
-#define _UART_SOURCE_
-
 /************************************************************************/
 
 #include <avr/io.h>
@@ -9,8 +7,21 @@
 
 /************************************************************************/
 
-namespace ClassUart
+namespace Uart
 {
+
+namespace BaseClass
+{
+
+/************************************************************************/
+
+#define UCSRA	_SFR_MEM8(UartBase::Get_uart_num()	+ 0)
+#define UCSRB	_SFR_MEM8(UartBase::Get_uart_num()	+ 1)
+#define UCSRC	_SFR_MEM8(UartBase::Get_uart_num()	+ 2)
+#define UBRRL	_SFR_MEM8(UartBase::Get_uart_num()	+ 4)
+#define UBRRH	_SFR_MEM8(UartBase::Get_uart_num()	+ 5)
+#define UDR		_SFR_MEM8(UartBase::Get_uart_num()	+ 6)
+#define UBRR	_SFR_MEM16(UartBase::Get_uart_num()	+ 4)
 
 /************************************************************************/
 /*	UartBase															*/
@@ -18,69 +29,56 @@ namespace ClassUart
 
 //----------------------------------------------------------------------//
 
-UartBase :: UartBase()	{}
-
-//----------------------------------------------------------------------//
-
-UartBase :: UartBase (UartNum _arg_uart_adrs)
+UartBase :: UartBase(const UartNum _uart_num)
 {
-	Initialize(_arg_uart_adrs);
-}
-
-//----------------------------------------------------------------------//
-
-void UartBase :: Initialize ()
-{
-	_UBRR_  = 0x0004;
-	_UCSRA_ = (1 << U2X);
-	_UCSRB_ &= ~((1 << RXEN) | (1 << TXEN) | (1 << UCSZ2) | (1 << RXCIE) | (1 << TXCIE) | (1 << UDRIE));
-	_UCSRC_ = ((1 << UPM1) | (1 << UPM0) | (1 << UCSZ1) | (1 << UCSZ0));
-}
-
-//----------------------------------------------------------------------//
-
-void UartBase :: Initialize (UartNum _arg_adrs)
-{
-	_mem_uart_adrs = _arg_adrs;
+	_mem_uart_num = _uart_num;
 	
-	_UBRR_  = 0x0004;
-	_UCSRA_ = (1 << U2X);
-	_UCSRB_ &= ~((1 << RXEN) | (1 << TXEN) | (1 << UCSZ2) | (1 << RXCIE) | (1 << TXCIE) | (1 << UDRIE));
-	_UCSRC_ = ((1 << UPM1) | (1 << UPM0) | (1 << UCSZ1) | (1 << UCSZ0));
+	UBRR  = 0x0004;
+	UCSRA = (1 << U2X);
+	UCSRB &= ~((1 << RXEN) | (1 << TXEN) | (1 << UCSZ2) | (1 << RXCIE) | (1 << TXCIE) | (1 << UDRIE));
+	UCSRC = ((1 << UPM1) | (1 << UPM0) | (1 << UCSZ1) | (1 << UCSZ0));
 }
 
 //----------------------------------------------------------------------//
 
-/************************************************************************/
-/*	UartSet																*/
-/************************************************************************/
-
-//----------------------------------------------------------------------//
-
-UartSet :: UartSet()	{}
-
-//----------------------------------------------------------------------//
-
-UartSet :: UartSet (UartNum _arg_uart_adrs)
-
-	: UartBase(_arg_uart_adrs)
-
-{}
-
-//----------------------------------------------------------------------//
-
-void UartSet :: Want_to_enable_9bit (const YesNo _yes_no)
+void UartBase :: Enable_9bit()
 {
-	if (_yes_no)	UartSet :: Enable_9bit();
-	else			UartSet :: Disable_9bit();
+	UCSRB |= (1 << UCSZ2);
 }
 
 //----------------------------------------------------------------------//
 
-void UartSet :: Want_to_enable_isr(const UartISR _isr, const YesNo _yes_no)
+void UartBase :: Disable_9bit()
 {
-	if (_yes_no)	UartSet :: Enable_isr(_isr);
-	else			UartSet :: Disable_isr(_isr);
+	UCSRB &= ~(1 << UCSZ2);
+}
+
+//----------------------------------------------------------------------//
+
+YesNo UartBase :: Is_enabled_9bit()
+{
+	return Is_true_the(UCSRB, UCSZ2);
+}
+
+//----------------------------------------------------------------------//
+
+void UartBase :: Enable_isr(const UartISR _isr)
+{
+	UCSRB |= (1 << _isr);
+}
+
+//----------------------------------------------------------------------//
+
+void UartBase :: Disable_isr(const UartISR _isr)
+{
+	UCSRB &= ~(1 << _isr);
+}
+
+//----------------------------------------------------------------------//
+
+YesNo UartBase :: Is_enabled_isr(const UartISR _isr)
+{
+	return Is_true_the(UCSRB, _isr);
 }
 
 //----------------------------------------------------------------------//
@@ -89,15 +87,6 @@ void UartSet :: Want_to_enable_isr(const UartISR _isr, const YesNo _yes_no)
 
 };
 
-/************************************************************************/
-
-#undef _UART_SOURCE_
-#undef _UCSRA_
-#undef _UCSRB_
-#undef _UCSRC_
-#undef _UBRRL_
-#undef _UBRRH_
-#undef _UDR_
-#undef _UBRR_
+};
 
 /************************************************************************/

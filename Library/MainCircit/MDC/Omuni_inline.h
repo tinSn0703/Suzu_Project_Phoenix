@@ -7,11 +7,11 @@
 
 //----------------------------------------------------------------------//
 
-inline void OmuniDiagonal :: Drive(const DirecX _direc_x, const DirecY _direc_y)
+inline void OmuniDiagonal :: Move(const DirecX _direc_x, const DirecY _direc_y)
 {
-	Wheel :: Set(_direc_x, _direc_y);
+	Wheel :: Set_direc(_direc_x, _direc_y);
 	
-	OmuniDiagonal :: Drive();
+	OmuniDiagonal :: Move();
 }
 
 //----------------------------------------------------------------------//
@@ -22,11 +22,11 @@ inline void OmuniDiagonal :: Drive(const DirecX _direc_x, const DirecY _direc_y)
 
 //----------------------------------------------------------------------//
 
-inline void OmuniOpposite :: Drive(const DirecX _direc_x, const DirecY _direc_y)
+inline void OmuniOpposite :: Move(const DirecX _direc_x, const DirecY _direc_y)
 {
-	Wheel :: Set(_direc_x, _direc_y);
+	Wheel :: Set_direc(_direc_x, _direc_y);
 	
-	OmuniOpposite :: Drive();
+	OmuniOpposite :: Move();
 }
 
 //----------------------------------------------------------------------//

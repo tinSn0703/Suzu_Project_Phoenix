@@ -1,37 +1,59 @@
-/*
- * Suzu_Project_Phoenix.cpp
- *
- * Created: 2017/02/16 15:48:40
- * Author : Suzu
- *
- * 新造したプログラムのテスト等を行うためのプロジェクト。
- * テストの際は近くにあるフォルダLibraryまでパスを飛ばしてください
- */ 
+
+/*************************************************************************
+
+　プロジェクトを作り直すのが面倒だったので、こんな感じに型名を切り替えるよ
+うにしました。
+　新しいプロジェクトが必要な場合は、新しいクラスを作ってください。テンプレ
+を用意しときます。テンプレとそれまでの奴があってないように見えますが、気に
+しないでください。早急に修正しときます。
+
+*************************************************************************/
+
+#include <avr/io.h>
 
 #include <MainCircit/MainCircit.h>
-#include <time.h>
 
-int main ()
+namespace On2017
 {
-	LCD_Init();
-	LCD_Display_str(0x00, "Suzu_Phonix");
-	
-	Dualshock2 _controller(UART_ADRS_0);
-	
-	OmuniOpposite _wheel(NUM_MDC_0, UART_ADRS_1);
+
+//Zephyranthes
+#include "OnSeason_Project_class/01_Zephyranthes/Project5.h" //Warhead
+#include "OnSeason_Project_class/01_Zephyranthes/Project6.h" //Catapult
+#include "OnSeason_Project_class/01_Zephyranthes/Project7.h" //Shotgun
+
+//Physalis
+#include "OnSeason_Project_class/02_Physalis/Project8.h"  //Kerberos-chan
+#include "OnSeason_Project_class/02_Physalis/Project9.h"  //OneWayTicket
+#include "OnSeason_Project_class/02_Physalis/Project10.h" //Otegine
+
+//Dendrobium
+#include "OnSeason_Project_class/03_Dendrobium/Project_11.h" //
+
+//Gerbera
+#include "OnSeason_Project_class/05_Gerbera/Project_12.h" //
+#include "OnSeason_Project_class/05_Gerbera/Project_13.h" //
+#include "OnSeason_Project_class/05_Gerbera/Project_14.h" //
+
+}
+
+#include "OffSeason_Project_class/01_Akiduki/TecnicSteer.h"
+#include "OffSeason_Project_class/02_Teruduki/AIG_No_0.h"
+
+int main()
+{	
+//	On2017::Gerbera::BanriFinal::Main _machine;
+	Off2017::Akiduki::TecnicSteer::Main _machine;
+//	Off2017::Teruduki::AIG_No_0::Main _machine;
 	
 	while (1)
 	{
-		_controller.Receive();
+		_machine.Input();
 		
-		if (_controller.Get_Cir() == BTN_ON)
-		{
-			
-		}
+		_machine.Process();
 		
-		_wheel.Drive(_controller.Get_stick_Lx(), _controller.Get_stick_Ly());
-		
-		_wheel.Transmit();
+		_machine.Output();
 	}
 }
+
+/************************************************************************/
 

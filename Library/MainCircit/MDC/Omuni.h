@@ -1,31 +1,43 @@
 
 #pragma once
 
+#include "ThreeOmuni.h"
+
 /************************************************************************/
 //‘ÎŠp
 
-class OmuniDiagonal : public Wheel
+class OmuniDiagonal : public FourWheel
 {
 public:
 	
-	OmuniDiagonal(MdcNum _mdc_num, UartNum _uart_num);
+	OmuniDiagonal(MotorNumber _min_number, UartNum _uart_num);
 	
-	void Drive();
-	void Drive(DirecX _direc_x, DirecY _direc_y);
+	void Move();
+	void Move(double _rad);
+	void Move(DirecX _direc_x, DirecY _direc_y);
+	
+	void Move_or_Turning();
 };
 
 /************************************************************************/
 //‘Î•Ó
 
-class OmuniOpposite : public Wheel
+class OmuniOpposite : public FourWheel
 {
 public:
 	
-	OmuniOpposite(MdcNum _mdc_num, UartNum _uart_num);
+	OmuniOpposite(MotorNumber _min_number, UartNum _uart_num);
 	
-	void Drive();
-	void Drive(DirecX _direc_x, DirecY _direc_y);
+	void Move();
+	void Move(double _rad);
+	void Move(DirecX _direc_x, DirecY _direc_y);
+	
+	void Move_or_Turning();
 };
+
+/************************************************************************/
+
+typedef OmuniDiagonal Mechanum;
 
 /************************************************************************/
 

@@ -1,11 +1,9 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 /************************************************************************/
 
-#include "ValveData/ValveData.h"
+#include "Valve_type.h"
 
 /************************************************************************/
 
@@ -14,7 +12,7 @@ namespace ClassValve
 
 /************************************************************************/
 
-#define _WAIT_MS_TIME_ 100
+#define WAIT_MS_TIME 100
 
 /************************************************************************/
 
@@ -22,10 +20,12 @@ namespace ClassValve
 
 class ValveBase
 {
+//variable
 protected:
 	
 	Valve _mem_data;
 	
+//function
 public:
 	
 	ValveBase ();
@@ -35,11 +35,12 @@ public:
 
 //----------------------------------------------------------------------//
 
-class ValveWrite : public virtual ValveBase
+class ValveSet : public virtual ValveBase
 {
+//function
 public:
 	
-	ValveWrite();
+	ValveSet();
 	
 	void Want_to_open_0(YesNo _yes);
 	void Want_to_open_1(YesNo _yes);
@@ -57,11 +58,12 @@ public:
 
 //----------------------------------------------------------------------//
 
-class ValveRead : public virtual ValveBase
-{	
+class ValveGet : public virtual ValveBase
+{
+//function
 public:
 	
-	ValveRead();
+	ValveGet();
 	
 	BOOL Is_open_for_0();
 	BOOL Is_open_for_1();
@@ -75,28 +77,28 @@ public:
 	BOOL Is_open_for(ValveNum _num);
 	
 	ValveData Get();
-	
-	BOOL operator [] (ValveNum _num);
 };
 
 //----------------------------------------------------------------------//
 
-class ValveOperate	: public virtual ValveWrite
-					, public virtual ValveRead
+class ValveOperate	: public virtual ValveSet
+					, public virtual ValveGet
 {
+//variable
 private:	
 	
-	Time _mem_timer[8];
-	Byte _mem_is_move_allow :8;
+	CountValue _mem_timer[8];
+	uByte _mem_is_move_enabled :8;
 	
+//function
 protected:
 	
 	void Set_timer(ValveNum _num);
-	BOOL Comp_timer(ValveNum _num);
+	BOOL Compare_timer(ValveNum _num);
 	
-	void Can_allow(ValveNum _num, BOOL _yes);	
-	BOOL Is_allow(ValveNum _num);
-	void Reversal_allow(ValveNum _num);
+	void Want_to_enable(ValveNum _num, YesNo _yes);	
+	BOOL Is_enabled(ValveNum _num);
+	void Reversal_enabled(ValveNum _num);
 	
 public:
 	
@@ -104,38 +106,37 @@ public:
 	
 	void Toggle (ValveNum _num);
 	
-	void Confirm_safety (ValveNum _num_a, ValveNum _num_b);
+	void Safety (ValveNum _num_a, ValveNum _num_b);
 	
-	void OpenClose (ValveNum _num, BOOL _is_move);	
-	void OpenClose (ValveNum _num_a, ValveNum _num_b, BOOL _is_move);
-	void OpenClose (ValveNum _num_a, BOOL _is_move_a, ValveNum _num_b, BOOL _is_move_b);
+	void Open_or_Close (ValveNum _num, YesNo _is_move);	
+	void Open_or_Close (ValveNum _num_a, ValveNum _num_b, YesNo _is_move);
+	void Open_or_Close (ValveNum _num_a, YesNo _is_move_a, ValveNum _num_b, YesNo _is_move_b);
 };
 
 //----------------------------------------------------------------------//
 
-class ValveLCD : public virtual ValveRead
+class ValveLCD : public virtual ValveGet
 {
+//function
 public:
 	
 	ValveLCD();
 	
-	void LCD(LcdAdrs _adrs, ValveNum _num);
-	void LCD(LcdAdrs _adrs, Decimal _decimal);		
+	void Display(LcdAdrs _adrs, ValveNum _num);
+	void Display(LcdAdrs _adrs, Decimal _decimal);		
 };
 
 //----------------------------------------------------------------------//
 
 /************************************************************************/
 
-}
+};
 
 /************************************************************************/
 
-#include "ValveBase_inline.h"
-#include "ValveWrite_inline.h"
-#include "ValveRead_inline.h"
+#include "ValveBase_inline/ValveBase_inline.h"
+#include "ValveBase_inline/ValveWrite_inline.h"
+#include "ValveBase_inline/ValveRead_inline.h"
 
 /************************************************************************/
-
-#endif /*__cplusplus*/
 

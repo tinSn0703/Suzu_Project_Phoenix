@@ -30,7 +30,6 @@ Decimal;
 #define ED_16	DECIMAL_16
 
 #define LCD_SEMI_CLEAR	"                "
-//						"0123456789abcdef"
 
 /************************************************************************/
 
@@ -38,5 +37,6 @@ Decimal;
 #include "akilcd_name/akilcd_name_ver1.h"
 #include "akilcd_name/akilcd_name_ver2.h"
 #include "akilcd_name/akilcd_name_ver3.h"
+#include "akilcd_name/akilcd_name_ver4.h"
 
 /************************************************************************/

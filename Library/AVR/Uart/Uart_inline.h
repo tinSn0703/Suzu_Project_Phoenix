@@ -7,6 +7,13 @@
 
 //----------------------------------------------------------------------//
 
+inline YesNo UartReceive :: Did_error_occurr()
+{
+	return _mem_did_error_occurr;
+}
+
+//----------------------------------------------------------------------//
+
 inline void UartReceive :: Enable_receive()
 {
 	Enable_UCSRB(RXEN);

@@ -1,6 +1,8 @@
 ﻿
 /************************************************************************/
 
+#include <stdio.h>
+
 #include <avr/io.h>
 #include <util/delay.h>
 
@@ -8,6 +10,10 @@
 #include <akilcd/akilcd_define/akilcd_NewMainCircit.h>
 
 /************************************************************************/
+
+//aaaa
+
+#ifdef _AKILCD_H_
 
 #define BIT_RS	(1 << RS)
 #define BIT_RW	(1 << RW)
@@ -33,7 +39,15 @@
 #define HIGH_DB6()	(	PORT_DB6 |= BIT_DB6	)
 #define HIGH_DB7()	(	PORT_DB7 |= BIT_DB7	)
 
+#endif
+
 /************************************************************************/
+
+#ifdef _AKILCD_H_
+
+/************************************************************************/
+
+//----------------------------------------------------------------------//
 
 static void Enable_writting_LCD ()
 {
@@ -46,103 +60,65 @@ static void Enable_writting_LCD ()
 
 //----------------------------------------------------------------------//
 
-static inline void Write_LCD_0 (const unsigned char data)
+static void Write_data_bit_7_to_4(const unsigned char data)
 {
-	LOW_RW();
-	LOW_RS();
-
-	if (data & (1<<7))	HIGH_DB7();
-	else				LOW_DB7();
+	((data & (1 << 7)) ? HIGH_DB7() : LOW_DB7());
+	((data & (1 << 6)) ? HIGH_DB6() : LOW_DB6());
+	((data & (1 << 5)) ? HIGH_DB5() : LOW_DB5());
+	((data & (1 << 4)) ? HIGH_DB4() : LOW_DB4());
 	
-	if (data & (1<<6))	HIGH_DB6();
-	else				LOW_DB6();
-	
-	if (data & (1<<5))	HIGH_DB5();
-	else				LOW_DB5();
-	
-	if (data & (1<<4))	HIGH_DB4();
-	else				LOW_DB4();
-
-	Enable_writting_LCD();
+	Enable_writting_LCD();	
 }
 
 //----------------------------------------------------------------------//
 
-static inline void Write_LCD_1 (const unsigned char data)
+static void Write_data_bit_3_to_0(const unsigned char data)
 {
-	LOW_RW();
-	LOW_RS();
-
-	if (data & (1<<7))	HIGH_DB7();	
-	else				LOW_DB7();
-		
-	if (data & (1<<6))	HIGH_DB6();
-	else				LOW_DB6();
-	
-	if (data & (1<<5))	HIGH_DB5();
-	else				LOW_DB5();
-	
-	if (data & (1<<4))	HIGH_DB4();
-	else				LOW_DB4();
-	
-	Enable_writting_LCD();
-
-	if (data & (1<<3))	HIGH_DB7();
-	else				LOW_DB7();
-	
-	if (data & (1<<2))	HIGH_DB6();
-	else				LOW_DB6();
-	
-	if (data & (1<<1))	HIGH_DB5();
-	else				LOW_DB5();
-	
-	if (data & (1<<0))	HIGH_DB4();
-	else				LOW_DB4();
+	((data & (1 << 3)) ? HIGH_DB7() : LOW_DB7());
+	((data & (1 << 2)) ? HIGH_DB6() : LOW_DB6());
+	((data & (1 << 1)) ? HIGH_DB5() : LOW_DB5());
+	((data & (1 << 0)) ? HIGH_DB4() : LOW_DB4());
 	
 	Enable_writting_LCD();
 }
 
 //----------------------------------------------------------------------//
 
-static inline void Write_LCD_2 (const unsigned char data)
+static inline void Write_LCD_0(const unsigned char data)
+{
+	LOW_RW();
+	LOW_RS();
+	
+	Write_data_bit_7_to_4(data);
+}
+
+//----------------------------------------------------------------------//
+
+static inline void Write_LCD_1(const unsigned char data)
+{
+	LOW_RW();
+	LOW_RS();
+	
+	Write_data_bit_7_to_4(data);
+	Write_data_bit_3_to_0(data);
+}
+
+//----------------------------------------------------------------------//
+
+static inline void Write_LCD_2(const unsigned char data)
 {
 	LOW_RW();
 	HIGH_RS();
-
-	if (data & (1<<7))	HIGH_DB7();
-	else				LOW_DB7();
 	
-	if (data & (1<<6))	HIGH_DB6();
-	else				LOW_DB6();
-	
-	if (data & (1<<5))	HIGH_DB5();
-	else				LOW_DB5();
-	
-	if (data & (1<<4))	HIGH_DB4();
-	else				LOW_DB4();
-	
-	Enable_writting_LCD();
-
-	if (data & (1<<3))	HIGH_DB7();
-	else				LOW_DB7();
-	
-	if (data & (1<<2))	HIGH_DB6();
-	else				LOW_DB6();
-	
-	if (data & (1<<1))	HIGH_DB5();
-	else				LOW_DB5();
-	
-	if (data & (1<<0))	HIGH_DB4();
-	else				LOW_DB4();
-	
-	Enable_writting_LCD();
+	Write_data_bit_7_to_4(data);
+	Write_data_bit_3_to_0(data);
 
 	LOW_RS();
 }
 
 //----------------------------------------------------------------------//
 
-static inline void Init_port_LCD ()
+static inline void Init_port_LCD()
 {
 	DDR_RS   |=  BIT_RS;	LOW_RS();
 	DDR_RW   |=  BIT_RW;	LOW_RW();
@@ -155,20 +131,40 @@ static inline void Init_port_LCD ()
 
 //----------------------------------------------------------------------//
 
-static inline void Write_adrress (LcdAdrs _arg_adrs)
+static inline void Write_adrress(const LcdAdrs _adrs)
 {
-	_arg_adrs |= 0b10000000;
-	Write_LCD_1(_arg_adrs);
+	Write_LCD_1(_adrs | 0b10000000);
 }
 
 //----------------------------------------------------------------------//
 
-void INI_LCD ()
+static void Wait_time(const int _ms)
 {
+	for (int i = 0; i < _ms; i ++)
+	{
+		_delay_ms(1);
+	}
+}
+
+//----------------------------------------------------------------------//
+
+/************************************************************************/
+
+#endif
+
+/************************************************************************/
+
+//----------------------------------------------------------------------//
+
+void INI_LCD()
+{
+	
+#ifdef _AKILCD_H_
+	
 	Init_port_LCD();
 	
 	_delay_ms(50);
-
+	
 	Write_LCD_0(0b00110000);	//function set(8bit)
 	_delay_ms(5);
 	
@@ -192,43 +188,89 @@ void INI_LCD ()
 	
 	Write_LCD_1(0b00000001);
 	_delay_ms(6);
+	
+#endif
+	
 }
 
 //----------------------------------------------------------------------//
 
-void CLR_DISPLAY ()
+int IS_LCD_INI()
 {
+	
+#ifdef _AKILCD_H_
+	
+	return ((DDR_RS >> RS) & (DDR_RW >> RW) & (DDR_EN >> EN) & 1);
+	
+#endif
+	
+}
+
+//----------------------------------------------------------------------//
+
+void CLR_DISPLAY()
+{
+	
+#ifdef _AKILCD_H_
+	
 	Write_LCD_1(0b00000001);
 	_delay_ms(2);
-}
-
-//----------------------------------------------------------------------//
-
-void PUT_LCD 
-(
-	const LcdAdrs	_arg_adrs, 
-	const char		_arg_char
-)
-{
-	Write_adrress(_arg_adrs);
 	
-	Write_LCD_2(_arg_char);
+#endif
+	
 }
 
 //----------------------------------------------------------------------//
 
-void STR_LCD
-(
-	const LcdAdrs	_arg_adrs,
-	const char		_arg_str[]
-)
+void PUT_LCD(const LcdAdrs _adrs, const char _char)
 {
-	Write_adrress(_arg_adrs);
+	
+#ifdef _AKILCD_H_
+	
+	Write_adrress(_adrs);
+	
+	Write_LCD_2(_char);
+	
+#endif
+	
+}
 
-	for (unsigned int i = 0; _arg_str[i] != '\0'; i++)
+//----------------------------------------------------------------------//
+
+void STR_LCD(const LcdAdrs _adrs, const char _str[])
+{
+	
+#ifdef _AKILCD_H_
+	
+	Write_adrress(_adrs);
+
+	for (unsigned int i = 0; _str[i] != '\0'; i++)
 	{
-		Write_LCD_2(_arg_str[i]);
+		Write_LCD_2(_str[i]);
 	}
+	
+#endif
+	
+}
+
+//----------------------------------------------------------------------//
+
+void STR_LCD_WAVE(const LcdAdrs _adrs, const char _str[], const int _ms)
+{
+	
+#ifdef _AKILCD_H_
+	
+	Write_adrress(_adrs);
+	
+	for (unsigned int i = 0; _str[i] != '\0'; i++)
+	{
+		Write_LCD_2(_str[i]);
+		
+		Wait_time(_ms);
+	}
+	
+#endif
+	
 }
 
 //----------------------------------------------------------------------//
@@ -236,12 +278,15 @@ void STR_LCD
 void PUT_NUM
 (
 	const LcdAdrs	_arg_adrs,
-	unsigned long	_arg_put_num,
-	const Digit		_arg_digit,
-	const Decimal	_arg_decimal
+	unsigned long	_number,
+	const Digit		_digit,
+	const Decimal	_decimal
 )
 {
-	static const char _temp_str[16] =
+	
+#ifdef _AKILCD_H_
+	
+	static const char _temp_char[16] =
 	{
 		'0' , '1' , '2' , '3' ,
 		'4' , '5' , '6' , '7' ,
@@ -249,70 +294,23 @@ void PUT_NUM
 		'c' , 'd' , 'e' , 'f'
 	};
 	
-	char _str[_arg_digit + 1];
+	char _str[_digit + 1];
 	
-	for (short int i = (_arg_digit - 1); i > -1; i--)
+	for (short int i = (_digit - 1); i > -1; i--)
 	{
-		_str[i] = _temp_str[_arg_put_num % _arg_decimal];
+		_str[i] = _temp_char[_number % _decimal];
 		
-		_arg_put_num /= (unsigned long)_arg_decimal;
+		_number /= (unsigned long)_decimal;
 	}
 	
-	_str[_arg_digit] = '\0';
+	_str[_digit] = '\0';
 	
-	STR_LCD(_arg_adrs,_str);
+	STR_LCD(_arg_adrs, _str);
+	
+#endif
+	
 }
 
 //----------------------------------------------------------------------//
-
-/************************************************************************/
-
-#undef RS
-#undef RW
-#undef EN
-#undef DB4
-#undef DB5
-#undef DB6
-#undef DB7
-
-#undef DDR_RS
-#undef DDR_RW
-#undef DDR_EN
-#undef DDR_DB4
-#undef DDR_DB5
-#undef DDR_DB6
-#undef DDR_DB7
-
-#undef PORT_RS
-#undef PORT_RW
-#undef PORT_EN
-#undef PORT_DB4
-#undef PORT_DB5
-#undef PORT_DB6
-#undef PORT_DB7
-
-#undef BIT_RS
-#undef BIT_RW
-#undef BIT_EN
-#undef BIT_DB4
-#undef BIT_DB5
-#undef BIT_DB6
-#undef BIT_DB7
-
-#undef LOW_RS
-#undef LOW_RW
-#undef LOW_EN
-#undef LOW_DB4
-#undef LOW_DB5
-#undef LOW_DB6
-#undef LOW_DB7
-
-#undef HIGH_RS
-#undef HIGH_RW
-#undef HIGH_EN
-#undef HIGH_DB4
-#undef HIGH_DB5
-#undef HIGH_DB6
-#undef HIGH_DB7
 
 /************************************************************************/
