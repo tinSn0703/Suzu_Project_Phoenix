@@ -19,21 +19,21 @@ ValveDouble::ValveDouble
 	const ValveNum _valveNO_number
 )
 {
-	_is_valveNC_open = NO;
-	_is_valveNO_open = NO;
+	_state_valveNC = NO;
+	_state_valveNO = NO;
 	
-	this->_valveNC_number = _valveNC_number;
-	this->_valveNO_number = _valveNO_number;
+	this->_num_valveNC = _valveNC_number;
+	this->_num_valveNO = _valveNO_number;
 }
 
 //----------------------------------------------------------------------//
 
 void ValveDouble::Safety()
 {
-	if ((Is_open_NC() & Is_open_NO()))
+	if ((Get_state_valveNC() & Get_state_valveNO()))
 	{
-		Want_to_open_NC(NO);
-		Want_to_open_NO(NO);
+		Set_NC(NO);
+		Set_NO(NO);
 	}
 }
 
@@ -45,8 +45,7 @@ void ValveDouble::Toggle()
 	{
 		case VALVE_NC:
 		{
-			Want_to_open_NC(YES);
-			Want_to_open_NO(NO);
+			Set(YES, NO);
 			
 			_next_moved_valve = VALVE_NO;
 			
@@ -54,8 +53,7 @@ void ValveDouble::Toggle()
 		}
 		case VALVE_NO:
 		{
-			Want_to_open_NC(NO);
-			Want_to_open_NO(YES);
+			Set(NO, YES);
 			
 			_next_moved_valve = VALVE_NC;
 			
@@ -77,7 +75,7 @@ void ValveDouble::Open_or_Close(const YesNo _is_move, const mSecond _wait_time)
 {
 	if (_is_move & ~Is_timer_running())	//最初の動作。両方閉じる。カウント開始
 	{
-		Want_to_open(NO, NO);
+		Set(NO, NO);
 		
 		if (_wait_time <= WAIT_MS_TIME)
 		{
@@ -91,7 +89,7 @@ void ValveDouble::Open_or_Close(const YesNo _is_move, const mSecond _wait_time)
 	
 	if (Is_timer_finished())	//カウント完了
 	{
-		if ((Is_open_NC() | Is_open_NO()) == NO)	//どちらかの電磁弁を開く
+		if ((Get_state_valveNC() | Get_state_valveNO()) == NO)	//どちらかの電磁弁を開く
 		{
 			Toggle();
 		}
@@ -116,9 +114,9 @@ void ValveDouble::Open_and_Close(const YesNo _is_move, const mSecond _open_time,
 {
 	if (_is_move & ~Is_timer_running())	//最初の動作。両方閉じる。カウント開始
 	{
-		if (Is_open_NC() == NO)
+		if (Get_state_valveNC() == NO)
 		{
-			Want_to_open(NO, NO);
+			Set(NO, NO);
 			
 			_next_moved_valve = VALVE_NC;
 			
@@ -128,29 +126,29 @@ void ValveDouble::Open_and_Close(const YesNo _is_move, const mSecond _open_time,
 	
 	if (Is_timer_finished())	//カウント完了
 	{
-		if ((Is_open_NC() | Is_open_NO()) == NO)
+		if ((Get_state_valveNC() | Get_state_valveNO()) == NO)
 		{
+			Start_timer(_close_time);
+			
 			switch (_next_moved_valve)
 			{
 				case VALVE_NC:
 				{
-					Want_to_open(YES, NO);
-					
-					Start_timer(_close_time);
+					Set(YES, NO);
 					
 					break;
 				}
 				case VALVE_NO:
 				{
-					Want_to_open(NO, YES);
+					Set(NO, YES);
 					
 					break;
 				}
 			}
 		}
-		else if (Is_open_NC() == YES)
+		else if (Get_state_valveNC() == YES)
 		{
-			Want_to_open(NO, NO);
+			Set(NO, NO);
 			
 			_next_moved_valve = VALVE_NO;
 			
@@ -172,23 +170,23 @@ void ValveDouble :: Open_valve_A(const YesNo _want_to_move)
 {
 	if (_want_to_move & ~Is_timer_running())	//最初の動作
 	{
-		if (Is_open_NO())	//B電磁弁を閉じる。カウント開始
+		if (Get_state_valveNO())	//B電磁弁を閉じる。カウント開始
 		{
-			Want_to_open_NO(NO);
+			Set_NO(NO);
 			
 			Start_timer(WAIT_MS_TIME);
 		}
 		else	//A電磁弁を開ける。終わり。
 		{
-			Want_to_open_NC(YES);	
+			Set_NC(YES);	
 		}
 	}
 	
 	if (Is_timer_finished())	//カウント完了
 	{
-		if (Is_open_NO() == NO)	Want_to_open_NC(YES);	//A電磁弁を開ける。終わり。
+		if (Get_state_valveNO() == NO)	Set_NC(YES);	//A電磁弁を開ける。終わり。
 		
-		if ((~Is_open_NC() | Is_open_NO() | _want_to_move) == NO)	//最後の動作。次の動作に備える。
+		if ((~Get_state_valveNC() | Get_state_valveNO() | _want_to_move) == NO)	//最後の動作。次の動作に備える。
 		{
 			Finish_timer();
 		}
@@ -201,23 +199,23 @@ void ValveDouble :: Open_valve_B(const YesNo _want_to_move)
 {
 	if (_want_to_move & ~Is_timer_running())	//最初の動作
 	{
-		if (Is_open_NC())	//A電磁弁を閉じる。カウント開始
+		if (Get_state_valveNC())	//A電磁弁を閉じる。カウント開始
 		{
-			Want_to_open_NC(NO);
+			Set_NC(CLOSE);
 			
 			Start_timer(WAIT_MS_TIME);
 		}
-		else	//B電磁弁を開ける。終わり。
+		else	//NO側を開ける。終わり。
 		{
-			Want_to_open_NO(YES);
+			Set_NO(OPEN);
 		}
 	}
 	
 	if (Is_timer_finished())	//カウント完了
 	{
-		if (Is_open_NC() == NO)	Want_to_open_NO(YES);	//B電磁弁を開ける。終わり。
+		if (Get_state_valveNC() == CLOSE)	Set_NO(OPEN);	//NO側を開ける。終わり。
 		
-		if ((Is_open_NC() | ~Is_open_NO() | _want_to_move) == NO)	//最後の動作。次の動作に備える。
+		if ((Get_state_valveNC() | ~Get_state_valveNO() | _want_to_move) == NO)	//最後の動作。次の動作に備える。
 		{
 			Finish_timer();
 		}

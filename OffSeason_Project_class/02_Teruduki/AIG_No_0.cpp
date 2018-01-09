@@ -53,15 +53,15 @@ Main::Main()
 	
 	_is_movement_lock = YES;
 	
-	_valve_fall_feed_fall_zone.Want_to_open(NO, YES);
-	_valve_fall_feed_wait_zone.Want_to_open(NO, YES);
+	_valve_fall_feed_fall_zone.Set(NO, YES);
+	_valve_fall_feed_wait_zone.Set(NO, YES);
 	
 	_wheel.Set_wheel_place(WheelPlace::FRONT_RIGHT,	1);
 	_wheel.Set_wheel_place(WheelPlace::BACK_RIGHT,	0);
 	_wheel.Set_wheel_place(WheelPlace::BACK_LEFT,	3);
 	_wheel.Set_wheel_place(WheelPlace::FRONT_LEFT,	2);
 	
-	_wheel.Record_pwm(7);
+	_wheel.Set(7);
 	_wheel.Set_steps(STEPS_USE);
 	
 //	LCD::Initialize();
@@ -90,7 +90,7 @@ void Main::Fire()
 {
 	_valve_gun_trigger.Open_and_Close(_controller.Get_A(), 1000);
 	
-	if (_valve_gun_trigger.Is_open_NO())
+	if (_valve_gun_trigger.Get_state_valveNO())
 	{
 		if (_timer_gun == TIMER_INITAL_VALUE)
 		{
@@ -101,7 +101,7 @@ void Main::Fire()
 		{
 			_timer_gun = TIMER_INITAL_VALUE;
 			
-			_valve_gun_trigger.Want_to_open_NO(NO);
+			_valve_gun_trigger.Set_NO(NO);
 		}
 	}
 }
@@ -257,11 +257,11 @@ void Main::Process()
 		
 		if (_controller.Get_ZL() | _controller.Get_ZR())
 		{
-			_wheel.Record_pwm(15);
+			_wheel.Set(15);
 		}
 		else
 		{
-			_wheel.Record_pwm(7);
+			_wheel.Set(7);
 		}
 		
 		Move_wheel();

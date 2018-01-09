@@ -35,11 +35,11 @@ void MDC::Set(const Signal _sig)
 
 //----------------------------------------------------------------------//
 
-void MDC::Set(const Pwm _pwm)
+void MDC::Set(const Power _pwm)
 {
 	for (uByte i = 0; i <= _num_of_slot; i++)
 	{
-		_motor[i].Set(_pwm)
+		_motor[i].Set(_pwm);
 	}
 }
 

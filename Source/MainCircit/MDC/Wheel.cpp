@@ -36,16 +36,6 @@ void Wheel::Set_turn_direction(const YesNo _is_turn_l, const YesNo _is_turn_r)
 
 //----------------------------------------------------------------------//
 
-void Wheel::Set_record_pwm()
-{
-	for (uByte i = 0; i <= Get_num_of_slot(); i++)
-	{
-		_motor[i].Set(_mem_pwm);
-	}
-}
-
-//----------------------------------------------------------------------//
-
 void Wheel::operator ++ (int i)
 {
 	if (_mem_pwm < 31)	_mem_pwm ++;

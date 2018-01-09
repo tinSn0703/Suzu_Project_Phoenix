@@ -15,10 +15,17 @@
 
 /************************************************************************/
 
-#define RAD_PER_AD 0.006141921	//2ƒÎ/1023
-#define DEG_PER_AD 0.351906158	//360/1023
+#define FR_SET_DEG +45.0
+#define BR_SET_DEG +135.0
+#define BL_SET_DEG -135.0
+#define FL_SET_DEG -45.0
 
-#define P_CONSTANT 0.344444444	//31/90
+#define MAX_LINIT_DEG +120
+#define MIN_LINIT_DEG -120
+
+//#define P_CONSTANT 0.344444444	//31/90
+//#define P_CONSTANT 0.516666666	//31/60
+#define P_CONSTANT 0.6888888888	//31/45
 
 /************************************************************************/
 
@@ -43,66 +50,29 @@ FourSteer::FourSteer(const UartNum _uart_num)
 
 //----------------------------------------------------------------------//
 
-void FourSteer::Set_angle_unit_place
-(
-	const FourWheelPlace	_place, 
-	const MotorNum			_motoro_num, 
-	const ADNum				_ad_num
-)
+void FourSteer::Move_angle_unit(double _deg)
 {
-	_motor_angle[_place].Reset(_motoro_num);
-	_meter_angle[_place].Reset(_ad_num, NO);
-}
-
-//----------------------------------------------------------------------//
-
-void FourSteer::Set_wheel_place(const FourWheelPlace _place, const MotorNum _num)
-{
-	_motor[_place].Reset(_num);
-}
-
-//----------------------------------------------------------------------//
-
-void FourSteer::Move_wheel(const double _move_deg)
-{
-	for (uByte i = 0; i < NUM_WHEEL; i++)
+	while (1)
 	{
-		_target_deg[i] = _move_deg;
-		
-		if ((_current_deg[i] > 0) && (_target_deg[i] == -180))
-			_target_deg[i] = +180;
-		else if ((_current_deg[i] < 0) && (_target_deg[i] == +180))
-			_target_deg[i] = -180;
-
-		if ((_target_deg[i] > 0) || ((_target_deg[i] == 0) && (_current_deg[i] < 0)))
-		{
-			if ((_target_deg[i] - 90) > _current_deg[i])
-			{
-				_target_deg[i] -= 180;
-				
-				_motor[i].Set(SIGNAL_REVERSE);
-			}
-			else
-			{
-				_motor[i].Set(SIGNAL_FORWARD);
-			}
-		}
-		else if ((_target_deg[i] < 0) || ((_target_deg[i] == 0) && (_current_deg[i] > 0)))
-		{
-			if ((_target_deg[i] + 90) < _current_deg[i])
-			{
-				_target_deg[i] += 180;
-
-				_motor[i].Set(SIGNAL_REVERSE);
-			}
-			else
-			{
-				_motor[i].Set(SIGNAL_FORWARD);
-			}
-		}
+		if		(_deg > +90)	_deg -= 180;
+		else if	(_deg < -90)	_deg += 180;
+		else	break;
 	}
 	
-	Wheel::Set_record_pwm();
+	_deg *= -1;
+	
+	_target_deg[WheelPlace::FRONT_RIGHT	] = _deg - 45;
+	_target_deg[WheelPlace::BACK_RIGHT	] = _deg + 45;
+	_target_deg[WheelPlace::BACK_LEFT	] = _deg - 45;
+	_target_deg[WheelPlace::FRONT_LEFT	] = _deg + 45;
+	
+	for (uByte i = 0; i < NUM_WHEEL; i++)
+	{
+		if		(_target_deg[i] > +90)	_target_deg[i] -= 180;
+		else if	(_target_deg[i] < -90)	_target_deg[i] += 180;
+	}
+	
+	Matched_wheel_angle();
 }
 
 //----------------------------------------------------------------------//
@@ -111,7 +81,70 @@ void FourSteer::Matched_wheel_angle()
 {
 	for (uByte i = 0; i < NUM_WHEEL; i++)
 	{
-		_motor_angle[i].Control((Power)((_target_deg[i] - _current_deg[i]) * P_CONSTANT));
+		if ((_target_deg[i] > _current_deg[i]) && (_current_deg[i] < MAX_LINIT_DEG))
+		{
+			_motor_angle[i].Set(SIGNAL_FORWARD, (Power)((_target_deg[i] - _current_deg[i]) * P_CONSTANT));
+			
+			continue;
+		}
+		
+		if ((_target_deg[i] < _current_deg[i]) && (_current_deg[i] > MIN_LINIT_DEG))
+		{
+			_motor_angle[i].Set(SIGNAL_REVERSE, (Power)((_current_deg[i] - _target_deg[i]) * P_CONSTANT));
+			
+			continue;
+		}
+		
+		_motor_angle[i].Set(SIGNAL_BREAK);
+	}
+}
+
+//----------------------------------------------------------------------//
+
+void FourSteer::Set_wheel_power(const double _deg)
+{
+	if (sin(_deg - FR_SET_DEG + _target_deg[WheelPlace::FRONT_RIGHT]) > 0)
+		_motor[WheelPlace::FRONT_RIGHT].Set(SIGNAL_FORWARD);
+	else
+		_motor[WheelPlace::FRONT_RIGHT].Set(SIGNAL_REVERSE);
+	
+	if (sin(_deg - BR_SET_DEG + _target_deg[WheelPlace::BACK_RIGHT]) > 0)
+		_motor[WheelPlace::BACK_RIGHT].Set(SIGNAL_FORWARD);
+	else
+		_motor[WheelPlace::BACK_RIGHT].Set(SIGNAL_REVERSE);
+	
+	if (sin(_deg - BL_SET_DEG + _target_deg[WheelPlace::BACK_LEFT]) > 0)
+		_motor[WheelPlace::BACK_LEFT].Set(SIGNAL_FORWARD);
+	else
+		_motor[WheelPlace::BACK_LEFT].Set(SIGNAL_REVERSE);
+	
+	if (sin(_deg - FL_SET_DEG + _target_deg[WheelPlace::FRONT_LEFT]) > 0)
+		_motor[WheelPlace::FRONT_LEFT].Set(SIGNAL_FORWARD);
+	else
+		_motor[WheelPlace::FRONT_LEFT].Set(SIGNAL_REVERSE);
+	
+	Wheel::Set_record_pwm();
+}
+
+//----------------------------------------------------------------------//
+
+void FourSteer::Dispaly_angle(const LcdAdrs _adrs, const double _deg)
+{
+	if ((-1 < _deg) && (_deg < 1))
+	{
+		LCD::Write(_adrs, " 000");
+	}
+	else if (_deg > 0)
+	{
+		LCD::Write(_adrs, '+');
+		
+		LCD::Write(_adrs + 1, (int)_deg, 3, DECIMAL_10);
+	}
+	else if (_deg < 0)
+	{
+		LCD::Write(_adrs, '-');
+		
+		LCD::Write(_adrs + 1, (int)(_deg * -1), 3, DECIMAL_10);
 	}
 }
 
@@ -121,7 +154,9 @@ void FourSteer::Read()
 {
 	for (int i = 0; i < NUM_WHEEL; i++)
 	{
-		_current_deg[i] = ((((double)_meter_angle[i].Read() * DEG_PER_AD) - 180) * -1);
+		_angle_meter[i].Read();
+		
+		_current_deg[i] = ((_angle_meter[i].Get_deg() - 180) * -0.819444444);
 	}
 	
 	_is_angle_set = YES;
@@ -129,7 +164,7 @@ void FourSteer::Read()
 
 //----------------------------------------------------------------------//
 
-void FourSteer::Move_angle_motor
+void FourSteer::Drive_angle_motor
 (
 	const FourWheelPlace	_place, 
 	const Signal			_sig, 
@@ -138,25 +173,72 @@ void FourSteer::Move_angle_motor
 {
 	if	(
 			(_is_angle_set == NO) ||
-			((_sig == SIGNAL_FORWARD) && (_current_deg[_place] >= +170)) ||
-			((_sig == SIGNAL_REVERSE) && (_current_deg[_place] <= -170))
+			((_sig == SIGNAL_FORWARD) && (_current_deg[_place] > MAX_LINIT_DEG)) ||
+			((_sig == SIGNAL_REVERSE) && (_current_deg[_place] < MIN_LINIT_DEG))
 		)
 	{
-		return (void)0;
+		_motor_angle[_place].Set(SIGNAL_BREAK);
 	}
-	
-	_motor_angle[_place].Set(_sig, _pwm);
+	else
+	{
+		_motor_angle[_place].Set(_sig, _pwm);
+	}
 }
 
 //----------------------------------------------------------------------//
 
-void FourSteer::Move(const double _deg)
+void FourSteer::Move()
+{
+	switch (Wheel::Get_move_direc_y())
+	{
+		case Direction::NORTH:
+		{
+			switch (Wheel::Get_move_direc_x())
+			{
+				case Direction::EAST:		Move(DEG_MOVE_FRONT_RIGHT);	return (void)0;
+				case Direction::WEST:		Move(DEG_MOVE_FRONT_LEFT);	return (void)0;
+				case Direction::xCENTER:	Move(DEG_MOVE_FRONT);		return (void)0;
+			}
+		}
+		case Direction::SOUTH:
+		{
+			switch (Wheel::Get_move_direc_x())
+			{
+				case Direction::EAST:		Move(DEG_MOVE_BACK_RIGHT);	return (void)0;
+				case Direction::WEST:		Move(DEG_MOVE_BACK_LEFT);	return (void)0;
+				case Direction::xCENTER:	Move(DEG_MOVE_BACK);		return (void)0;
+			}
+		}
+		case Direction::yCENTER:
+		{
+			switch (Wheel::Get_move_direc_x())
+			{
+				case Direction::EAST:		Move(DEG_MOVE_RIGHT);	return (void)0;
+				case Direction::WEST:		Move(DEG_MOVE_LEFT);	return (void)0;
+				case Direction::xCENTER:	SpinTurn();				return (void)0;
+			}
+		}
+	}
+}
+
+//----------------------------------------------------------------------//
+
+void FourSteer::Move(double _deg)
 {
 	if (_is_angle_set)
 	{
-		Move_wheel(_deg);
+		_deg += _machine_front_deg;
 		
-		Matched_wheel_angle();
+		while (1)
+		{
+			if		(_deg > +180)	_deg -= 360;
+			else if	(_deg < -180)	_deg += 360;
+			else	break;
+		}
+		
+		Move_angle_unit(_deg);
+		
+		Set_wheel_power(_deg);
 	}
 	else
 	{
@@ -166,34 +248,25 @@ void FourSteer::Move(const double _deg)
 
 //----------------------------------------------------------------------//
 
-void FourSteer::Move(const Pwm _r, const double _deg)
-{
-	Wheel::Record_pwm(_r);
-	
-	Move(_deg);
-}
-
-//----------------------------------------------------------------------//
-
 void FourSteer::SpinTurn()
 {
-	if (_is_angle_set)
+	if ((_is_angle_set) && (Wheel::Get_turn_direc() != NON_TURN))
 	{
-		_target_deg[WheelPlace::FRONT_RIGHT	] = -45;
-		_target_deg[WheelPlace::BACK_RIGHT	] = +45;
-		_target_deg[WheelPlace::BACK_LEFT	] = -45;
-		_target_deg[WheelPlace::FRONT_LEFT	] = +45;
+		_target_deg[WheelPlace::FRONT_RIGHT	] = 0;
+		_target_deg[WheelPlace::BACK_RIGHT	] = 0;
+		_target_deg[WheelPlace::BACK_LEFT	] = 0;
+		_target_deg[WheelPlace::FRONT_LEFT	] = 0;
+		
+		Matched_wheel_angle();
 		
 		switch (Wheel::Get_turn_direc())
 		{
-			case LEFT_TURN:		Set(SIGNAL_FORWARD);	break;
-			case RIGHT_TURN:	Set(SIGNAL_REVERSE);	break;
-			default:			Set(SIGNAL_BREAK);		break;
+			case LEFT_TURN:		MDC::Set(SIGNAL_FORWARD);	break;
+			case RIGHT_TURN:	MDC::Set(SIGNAL_REVERSE);	break;
+			default:	break;
 		}
 		
 		Wheel::Set_record_pwm();
-		
-		Matched_wheel_angle();
 	}
 	else
 	{
@@ -232,29 +305,7 @@ void FourSteer::Dispaly_ad_data(const LcdAdrs _adrs)
 {
 	for (uByte i = 0; i < NUM_WHEEL; i ++)
 	{
-		LCD::Write(_adrs + i * 4, _meter_angle[i].Get_data(), 4, DECIMAL_10);
-	}
-}
-
-//----------------------------------------------------------------------//
-
-void FourSteer::Dispaly_angle(const LcdAdrs _adrs, const double _deg)
-{
-	if ((-1 < _deg) && (_deg < 1))
-	{
-		LCD::Write(_adrs, " 000");
-	}
-	else if (_deg > 0)
-	{
-		LCD::Write(_adrs, '+');
-		
-		LCD::Write(_adrs + 1, (int)_deg, 3, DECIMAL_10);
-	}
-	else if (_deg < 0)
-	{
-		LCD::Write(_adrs, '-');
-		
-		LCD::Write(_adrs + 1, (int)(_deg * -1), 3, DECIMAL_10);
+		LCD::Write(_adrs + i * 4, _angle_meter[i].Get_data(), 4, DECIMAL_10);
 	}
 }
 
@@ -286,13 +337,6 @@ void FourSteer::Display_angle_motor_power(const LcdAdrs _adrs)
 	{
 		_motor_angle[i].Display_power(_adrs + 3 * i);
 	}
-}
-
-//----------------------------------------------------------------------//
-
-void FourSteer::Display_wheel_power(const LcdAdrs _adrs)
-{
-	Display_power(_adrs);
 }
 
 //----------------------------------------------------------------------//

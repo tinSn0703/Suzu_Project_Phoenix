@@ -202,12 +202,6 @@
     <Folder Include="Source\MainCircit\Servo\" />
     <Folder Include="Source\MainCircit\Valve\" />
     <Folder Include="Source\Other" />
-    <Folder Include="OnSeason_Project_class" />
-    <Folder Include="OnSeason_Project_class\01_Zephyranthes" />
-    <Folder Include="OnSeason_Project_class\02_Physalis" />
-    <Folder Include="OnSeason_Project_class\03_Dendrobium" />
-    <Folder Include="OnSeason_Project_class\05_Gerbera" />
-    <Folder Include="OnSeason_Project_class\05_Gerbera\Project14" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="main.cpp">
@@ -325,81 +319,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Source\MainCircit\Valve\ValveSingle.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\01_Zephyranthes\Project5.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\01_Zephyranthes\Project5.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\01_Zephyranthes\Project5_private.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\01_Zephyranthes\Project6.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\01_Zephyranthes\Project6.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\01_Zephyranthes\Project7.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\01_Zephyranthes\Project7.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\02_Physalis\Project10.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\02_Physalis\Project10.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\02_Physalis\Project8.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\02_Physalis\Project8.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\02_Physalis\Project9.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\02_Physalis\Project9.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\03_Dendrobium\Project_11.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\03_Dendrobium\Project_11.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\05_Gerbera\Project14\PackMan.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\05_Gerbera\Project14\PackMan.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\05_Gerbera\Project_12.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\05_Gerbera\Project_12.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\05_Gerbera\Project_13.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\05_Gerbera\Project_13.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\05_Gerbera\Project_14.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\05_Gerbera\Project_14.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\Project_template.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="OnSeason_Project_class\Project_template.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

@@ -1,5 +1,4 @@
 
-
 #include <akilcd/akilcd.h>
 #include <Others/Others.h>
 #include <MainCircit/Signal.h>
@@ -35,7 +34,7 @@ MotorOperate::MotorOperate(const MotorNum _motor_num, const YesNo _is_signal_rev
 
 //----------------------------------------------------------------------//
 
-void MotorOperate::Control(const Power _power)
+void MotorOperate::Drive(const Power _power)
 {
 	if		(_power > 0)	Set(SIGNAL_FORWARD, _power);
 	else if	(_power < 0)	Set(SIGNAL_REVERSE, _power * -1);
@@ -44,7 +43,7 @@ void MotorOperate::Control(const Power _power)
 
 //----------------------------------------------------------------------//
 
-void MotorOperate::Control_P
+void MotorOperate::Drive_P
 (
 	const int		_target_value,
 	const int		_current_value,
@@ -71,7 +70,7 @@ void MotorOperate::Control_P
 
 //----------------------------------------------------------------------//
 
-void MotorOperate::Control_P
+void MotorOperate::Drive_P
 (
 	const double	_target, 
 	const double	_current,

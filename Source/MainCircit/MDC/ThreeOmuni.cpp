@@ -41,10 +41,10 @@ ThreeOmuni::ThreeOmuni
 
 void ThreeOmuni::Move(const double _deg)
 {
-	_motor[WheelPlace::FRONT].Control(sin((_deg -   0) * PI / 180) * Get_pwm());
-	_motor[WheelPlace::LEFT ].Control(sin((_deg - 120) * PI / 180) * Get_pwm());
-	_motor[WheelPlace::RIGHT].Control(sin((_deg - 240) * PI / 180) * Get_pwm());
-
+	_motor[WheelPlace::FRONT].Drive(sin((_deg -   0) * PI / 180) * Get_pwm());
+	_motor[WheelPlace::LEFT ].Drive(sin((_deg - 120) * PI / 180) * Get_pwm());
+	_motor[WheelPlace::RIGHT].Drive(sin((_deg - 240) * PI / 180) * Get_pwm());
+	
 	if (_motor[WheelPlace::FRONT] == SIGNAL_BREAK)
 	{
 		_motor[WheelPlace::LEFT ] = Get_pwm();

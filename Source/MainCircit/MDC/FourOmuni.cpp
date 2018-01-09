@@ -32,27 +32,27 @@ void FourOmuni::Move()
 		{
 			switch (Get_move_direc_x())
 			{
-				case Direction::EAST:		Move( 45);	return (void)0;
-				case Direction::WEST:		Move(315);	return (void)0;
-				case Direction::xCENTER:	Move(360);	return (void)0;
+				case Direction::EAST:		Move(DEG_MOVE_FRONT_RIGHT);	return (void)0;
+				case Direction::WEST:		Move(DEG_MOVE_FRONT_LEFT);	return (void)0;
+				case Direction::xCENTER:	Move(DEG_MOVE_FRONT);		return (void)0;
 			}
 		}
 		case Direction::SOUTH:
 		{
 			switch (Get_move_direc_x())
 			{
-				case Direction::EAST:		Move(135);	return (void)0;
-				case Direction::WEST:		Move(225);	return (void)0;
-				case Direction::xCENTER:	Move(180);	return (void)0;
+				case Direction::EAST:		Move(DEG_MOVE_BACK_RIGHT);	return (void)0;
+				case Direction::WEST:		Move(DEG_MOVE_BACK_LEFT);	return (void)0;
+				case Direction::xCENTER:	Move(DEG_MOVE_BACK);		return (void)0;
 			}
 		}
 		case Direction::yCENTER:
 		{
 			switch (Get_move_direc_x())
 			{
-				case Direction::EAST:		Move( 90);	return (void)0;
-				case Direction::WEST:		Move(270);	return (void)0;
-				case Direction::xCENTER:	Stop();		return (void)0;
+				case Direction::EAST:		Move(DEG_MOVE_RIGHT);	return (void)0;
+				case Direction::WEST:		Move(DEG_MOVE_LEFT);	return (void)0;
+				case Direction::xCENTER:	Stop();					return (void)0;
 			}
 		}
 	}
@@ -62,10 +62,10 @@ void FourOmuni::Move()
 
 void FourOmuni::Move(const double _deg)
 {
-	_motor[WheelPlace::FRONT_RIGHT].Control(Get_pwm() * sin((_deg -  45 + _mem_move_front_deg) * RAD_PER_DEG));
-	_motor[WheelPlace::BACK_RIGHT ].Control(Get_pwm() * sin((_deg - 135 + _mem_move_front_deg) * RAD_PER_DEG));
-	_motor[WheelPlace::BACK_LEFT  ].Control(Get_pwm() * sin((_deg - 225 + _mem_move_front_deg) * RAD_PER_DEG));
-	_motor[WheelPlace::FRONT_LEFT ].Control(Get_pwm() * sin((_deg - 315 + _mem_move_front_deg) * RAD_PER_DEG));
+	_motor[WheelPlace::FRONT_RIGHT].Drive(Get_pwm() * sin((_deg -  45 + _mem_move_front_deg) * RAD_PER_DEG));
+	_motor[WheelPlace::BACK_RIGHT ].Drive(Get_pwm() * sin((_deg - 135 + _mem_move_front_deg) * RAD_PER_DEG));
+	_motor[WheelPlace::BACK_LEFT  ].Drive(Get_pwm() * sin((_deg - 225 + _mem_move_front_deg) * RAD_PER_DEG));
+	_motor[WheelPlace::FRONT_LEFT ].Drive(Get_pwm() * sin((_deg - 315 + _mem_move_front_deg) * RAD_PER_DEG));
 	
 	if (_motor[WheelPlace::FRONT_RIGHT].Get_pwm() == _motor[WheelPlace::BACK_RIGHT].Get_pwm())
 	{
