@@ -77,11 +77,11 @@ void FourOmuni::Move(const double _deg)
 
 void FourOmuni::SpinTurn()
 {
-	switch (Get_turn_direc())
+	switch (Wheel::Get_turn_direc())
 	{
-		case LEFT_TURN:		Set(SIGNAL_REVERSE);	break;
-		case RIGHT_TURN:	Set(SIGNAL_FORWARD);	break;
-		default:			Set(SIGNAL_BREAK);		break;
+		case LEFT_TURN:		MDC::Set(SIGNAL_REVERSE);	break;
+		case RIGHT_TURN:	MDC::Set(SIGNAL_FORWARD);	break;
+		default:			MDC::Set(SIGNAL_BREAK);		break;
 	}
 	
 	Wheel::Set_record_pwm();

@@ -219,6 +219,12 @@
     <Compile Include="OffSeason_Project_class\02_Teruduki\AIG_No_0.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="OffSeason_Project_class\02_Teruduki\Gourobo_Cteam.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="OffSeason_Project_class\02_Teruduki\Gourobo_Cteam.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Source\akilcd\akilcd.c">
       <SubType>compile</SubType>
     </Compile>

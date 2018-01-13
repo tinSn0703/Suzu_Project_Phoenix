@@ -38,12 +38,14 @@ namespace On2017
 
 #include "OffSeason_Project_class/01_Akiduki/TecnicSteer.h"
 #include "OffSeason_Project_class/02_Teruduki/AIG_No_0.h"
+#include "OffSeason_Project_class/02_Teruduki/Gourobo_Cteam.h"
 
 int main()
 {	
 //	On2017::Gerbera::BanriFinal::Main _machine;
-	Off2017::Akiduki::TecnicSteer::Main _machine;
+//	Off2017::Akiduki::TecnicSteer::Main _machine;
 //	Off2017::Teruduki::AIG_No_0::Main _machine;
+	Off2017::Teruduki::Gourobo_Cteam::Main _machine;
 	
 	while (1)
 	{

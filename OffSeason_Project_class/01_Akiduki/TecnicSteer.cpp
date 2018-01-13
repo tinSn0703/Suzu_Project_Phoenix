@@ -18,6 +18,15 @@ namespace TecnicSteer
 
 /************************************************************************/
 
+#define INIT_LED()	DDRA = 0xff; PORTA = 0x00
+
+#define PORT_LED	PORTA
+
+#define LED_STATE_LOCK		0x00
+#define LED_STATE_UNLOCK	0x0f
+
+/************************************************************************/
+
 //----------------------------------------------------------------------//
 
 Main::Main()
@@ -25,12 +34,18 @@ Main::Main()
 	: _wheel(Uart::NUM_1)
 	, _controller(Uart::NUM_0)
 {
+	INIT_LED();
+	
 	LCD::Initialize();
 	
 	_wheel.Set_wheel_unit_place(WheelPlace::FRONT_RIGHT, 4, 0, AD_NUM_0);
 	_wheel.Set_wheel_unit_place(WheelPlace::BACK_RIGHT,	 7, 3, AD_NUM_3);
 	_wheel.Set_wheel_unit_place(WheelPlace::BACK_LEFT,	 6, 2, AD_NUM_2);
 	_wheel.Set_wheel_unit_place(WheelPlace::FRONT_LEFT,	 5, 1, AD_NUM_1);
+	
+	_wheel.Set(5);
+	
+	_is_unlock = NO;
 }
 
 //----------------------------------------------------------------------//
@@ -40,38 +55,61 @@ void Main::Input()
 	_wheel.Read();
 	
 	_controller.Read();
+	
+	if (_controller.Get_SELECT())
+	{
+		_is_unlock = NO;
+	}
+	
+	if (_controller.Get_START())
+	{
+		LCD::Initialize();
+		
+		_is_unlock = YES;
+	}
+	
+	_wheel.Set_move_direction(_controller.Get_L_stick_x(), _controller.Get_L_stick_y());
+	
+	_wheel.Set_turn_direction(_controller.Get_L1(), _controller.Get_R1());
 }
 
 //----------------------------------------------------------------------//
 
 void Main::Process()
 {
-	if (_controller.Get_R_stick_y() == Direction::OVER)
+	if (_is_unlock)
 	{
-		_wheel.Stop();
-		
-		if (_controller.Get_Triangle())	_wheel.Drive_angle_motor(WheelPlace::FRONT_RIGHT,	SIGNAL_FORWARD, 8);
-		if (_controller.Get_Circle())	_wheel.Drive_angle_motor(WheelPlace::FRONT_LEFT,	SIGNAL_FORWARD, 8);
-		if (_controller.Get_Square())	_wheel.Drive_angle_motor(WheelPlace::BACK_RIGHT,	SIGNAL_FORWARD, 8);
-		if (_controller.Get_Cross())	_wheel.Drive_angle_motor(WheelPlace::BACK_LEFT,	SIGNAL_FORWARD, 8);
-	}
-	else if (_controller.Get_R_stick_y() == Direction::UNDER)
-	{
-		_wheel.Stop();
-		
-		if (_controller.Get_Triangle())	_wheel.Drive_angle_motor(WheelPlace::FRONT_RIGHT,	SIGNAL_REVERSE, 8);
-		if (_controller.Get_Circle())	_wheel.Drive_angle_motor(WheelPlace::FRONT_LEFT,	SIGNAL_REVERSE, 8);
-		if (_controller.Get_Square())	_wheel.Drive_angle_motor(WheelPlace::BACK_RIGHT,	SIGNAL_REVERSE, 8);
-		if (_controller.Get_Cross())	_wheel.Drive_angle_motor(WheelPlace::BACK_LEFT,	SIGNAL_REVERSE, 8);
-	}
-	else
-	{
-		_wheel.Set_move_direction(_controller.Get_L_stick_x(), _controller.Get_L_stick_y());
-		_wheel.Set_turn_direction(_controller.Get_R1(), _controller.Get_L1());
-		
-		_wheel.Set(10);
-		
-		_wheel.Move();
+		if (_wheel.Is_turn_l() | _wheel.Is_turn_r())
+		{
+			if (_controller.Get_R_stick(Direction::RIGHT, Direction::OVER))
+			{
+				_wheel.PivotTurn(WheelPlace::FRONT_RIGHT);
+			}
+			else if (_controller.Get_R_stick(Direction::RIGHT, Direction::UNDER))
+			{
+				_wheel.PivotTurn(WheelPlace::BACK_RIGHT);
+			}
+			else if (_controller.Get_R_stick(Direction::LEFT, Direction::UNDER))
+			{
+				_wheel.PivotTurn(WheelPlace::BACK_LEFT);
+			}
+			else if (_controller.Get_R_stick(Direction::LEFT, Direction::OVER))
+			{
+				_wheel.PivotTurn(WheelPlace::FRONT_LEFT);
+			}
+			else if (_controller.Get_R_stick(Direction::xCENTER, Direction::yCENTER))
+			{
+				_wheel.SpinTurn();
+			}
+			else
+			{
+				_wheel.Stop();
+			}
+		}
+		else
+		{
+			_wheel.Move();
+		}
 	}
 }
 
@@ -79,17 +117,28 @@ void Main::Process()
 
 void Main::Output()
 {
-	_wheel.Write();
-	
-//	_wheel.Dispaly_ad_data(0x00);
+	if (_is_unlock)
+	{
+		if (PORT_LED == LED_STATE_LOCK)
+		{
+			PORT_LED = LED_STATE_UNLOCK;
+		}
+		
+		_wheel.Write();
+	}
+	else
+	{
+		if (PORT_LED == LED_STATE_UNLOCK)
+		{
+			PORT_LED = LED_STATE_LOCK;
+		}
+		
+		_wheel.Write_clear();
+	}
 	
 	_wheel.Dispaly_current_angle(0x00);
 	
 	_wheel.Dispaly_target_angle(0x40);
-	
-//	_wheel.Display_angle_motor_power(0x40);
-	
-//	_controller.Display(0x40);
 }
 
 //----------------------------------------------------------------------//

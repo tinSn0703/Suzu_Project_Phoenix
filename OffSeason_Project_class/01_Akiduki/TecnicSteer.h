@@ -41,6 +41,8 @@ private:
 	FourSteer _wheel;
 	
 	Controller::Bit24::Dualshock2 _controller;
+	
+	YesNo _is_unlock :1;
 };
 
 /************************************************************************/
