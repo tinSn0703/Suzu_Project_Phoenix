@@ -79,36 +79,13 @@ void Main::Process()
 {
 	if (_is_unlock)
 	{
-		if (_wheel.Is_turn_l() | _wheel.Is_turn_r())
+		if (_wheel.Is_move())
 		{
-			if (_controller.Get_R_stick(Direction::RIGHT, Direction::OVER))
-			{
-				_wheel.PivotTurn(WheelPlace::FRONT_RIGHT);
-			}
-			else if (_controller.Get_R_stick(Direction::RIGHT, Direction::UNDER))
-			{
-				_wheel.PivotTurn(WheelPlace::BACK_RIGHT);
-			}
-			else if (_controller.Get_R_stick(Direction::LEFT, Direction::UNDER))
-			{
-				_wheel.PivotTurn(WheelPlace::BACK_LEFT);
-			}
-			else if (_controller.Get_R_stick(Direction::LEFT, Direction::OVER))
-			{
-				_wheel.PivotTurn(WheelPlace::FRONT_LEFT);
-			}
-			else if (_controller.Get_R_stick(Direction::xCENTER, Direction::yCENTER))
-			{
-				_wheel.SpinTurn();
-			}
-			else
-			{
-				_wheel.Stop();
-			}
+			_wheel.Curve(25);
 		}
 		else
 		{
-			_wheel.Move();
+			_wheel.SpinTurn();
 		}
 	}
 }

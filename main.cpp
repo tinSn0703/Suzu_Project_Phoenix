@@ -43,9 +43,9 @@ namespace On2017
 int main()
 {	
 //	On2017::Gerbera::BanriFinal::Main _machine;
-//	Off2017::Akiduki::TecnicSteer::Main _machine;
+	Off2017::Akiduki::TecnicSteer::Main _machine;
 //	Off2017::Teruduki::AIG_No_0::Main _machine;
-	Off2017::Teruduki::Gourobo_Cteam::Main _machine;
+//	Off2017::Teruduki::Gourobo_Cteam::Main _machine;
 	
 	while (1)
 	{
