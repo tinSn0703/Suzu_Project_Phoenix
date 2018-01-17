@@ -70,7 +70,7 @@ void Main::Input()
 	
 	_wheel.Set_move_direction(_controller.Get_L_stick_x(), _controller.Get_L_stick_y());
 	
-	_wheel.Set_turn_direction(_controller.Get_L1(), _controller.Get_R1());
+	_wheel.Set_turn_direction(_controller.Get_R1(), _controller.Get_L1());
 }
 
 //----------------------------------------------------------------------//
@@ -81,7 +81,7 @@ void Main::Process()
 	{
 		if (_wheel.Is_move())
 		{
-			_wheel.Curve(25);
+			_wheel.Curve(_controller.Get_R2(), _controller.Get_L2(), 25);
 		}
 		else
 		{
